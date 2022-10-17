@@ -1,5 +1,5 @@
-
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -45,17 +45,18 @@
           <h5 class="card-title mb-5 d-flex justify-content-center">Login</h5>
           
           <!--Join Form-->
-          <form >
+
+          <form action="/login1" method="post">
             <div class="row mb-3 d-flex justify-content-center">
-              <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
+              <label for="email" class="col-sm-2 col-form-label">Email</label>
               <div class="col-sm-3">
-                <input type="email" class="form-control" id="inputEmail3" required>
+                <input type="email" class="form-control" id="email" name="email" required>
               </div>
             </div>
             <div class="row mb-3 d-flex justify-content-center">
-              <label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
+              <label for="password" class="col-sm-2 col-form-label">Password</label>
               <div class="col-sm-3">
-                <input type="password" class="form-control" id="inputPassword1" required>
+                <input type="password" class="form-control" id="password" name="password" required>
               </div>
             </div>
 
@@ -70,8 +71,8 @@
             </div>
 
               <div class="mt-5 d-flex justify-content-center me-auto gap-2">
-              <button type="button" class="btn btn-primary btn-sm margin-left-2">Send code</button>
-              <button type="button" class="btn btn-secondary btn-sm">Create Account</button>
+              <button type="submit" class="btn btn-primary btn-sm margin-left-2">Send code</button>
+              <a href="/join"><button type="button" class="btn btn-secondary btn-sm">Create Account</button></a>
             
             </div>
            </form>
