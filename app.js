@@ -4,6 +4,41 @@ const app = express();
 const session = require('express-session');
 const path = require('path');
 
+//view engine setup
+app.set('view-engine', 'ejs');
+
+//main page
+app.get('/', (req, res) => {
+    res.render('index.ejs');
+});
+
+//login page
+app.get('/login1', (req, res) => {
+  res.render('login1.ejs');
+});
+
+app.get('/login2', (req, res) => {
+  res.render('login2.ejs');
+});
+
+//register page
+app.get('/join', (req, res) => {
+  res.render('join.ejs');
+});
+
+//orderDetails page
+app.get('/orderDetails', (req, res) => {
+  res.render('orderDetails.ejs');
+});
+
+//productDetails page
+app.get('/productDetails', (req, res) => {
+  res.render('productDetails.ejs');
+});
+
+
+/* 
+
 //session 
 app.use(session({
     secret: 'secret code',
@@ -36,7 +71,7 @@ app.get("/login", (req, res) => {
   let password = req.body.password;
   console.log(userId, password);
   res.send("Thank you for logging in");
-  }); */
+  }); */ 
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
