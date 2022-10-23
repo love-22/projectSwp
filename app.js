@@ -8,6 +8,14 @@ const session = require('express-session');
 //const path = require('path');
 const bcrypt = require('bcrypt'); 
 const flash = require('express-flash');
+const sqlite3 = require('sqlite3').verbose();
+
+let sql;
+
+// Connect to DB.
+const db = new sqlite3.Database('./test.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err)=>{
+  if (err) return console.error(err.message);
+});
 
 //passport initialization
 const passport = require('passport');
@@ -72,6 +80,12 @@ app.get('/join', (req, res) => {
 app.post('/join', async (req, res) => {
   try{
     const hashedPassword = await bcrypt.hash(req.body.password, 10); //hashing password
+
+    sql = `INSERT INTO users(name, email, password) VALUES (?, ?, ?)`;
+    db.run(sql, [req.body.name, req.body.email, hashedPassword], (err)=>{
+        if (err) return console.error(err.message);
+    })
+
     users.push({
       id: Date.now().toString(),
       name: req.body.name,
@@ -94,26 +108,6 @@ app.get('/orderDetails', (req, res) => {
 app.get('/productDetails', (req, res) => {
   res.render('productDetails.ejs');
 });
-
-
-/* 
-
-//session 
-app.use(session({
-    secret: 'secret code',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: false,
-      maxAge: 1000 * 60 * 60 //
-    }
-  }));
-
-//Api middelwares
-app.use(express.json()); //this is to appcep data in json format
-app.use(express.static('public')); //this is to serve static files
-
- */ 
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
