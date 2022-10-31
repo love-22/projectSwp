@@ -162,6 +162,26 @@ app.get('/productDetails', (req, res) => {
   res.render('productDetails.ejs');
 });
 
+
+//productUpload page .........not working
+/* app.get('/productUpload', (req, res) => {
+  res.render('productUpload.ejs');
+});
+
+
+app.post('/productUpload', async (req, res) => {
+  try{
+  sql = `INSERT INTO products(name, price, description, image) VALUES (?, ?, ?, ?)`;
+  db.run(sql, [req.body.name, req.body.price, req.body.description, req.body.image], (err)=>{
+      if (err) return console.error(err.message);
+  })
+  res.redirect('/productDetails');
+  } catch{
+    res.redirect('/productUpload');
+  }
+}); */
+
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
