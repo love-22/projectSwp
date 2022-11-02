@@ -1,0 +1,117 @@
+@charset "utf-8";
+
+/*All pages Common CSS*/
+  * {
+	margin:0px;
+	padding: 0px;
+	box-sizing: border-box;
+	font-family: 'Readex Pro', sans-serif;
+}
+
+ul,ol {
+	list-style: none;
+}
+
+a {
+	text-decoration: none;
+}
+
+
+main{
+	padding: 10px 10px;
+}
+
+
+/*All pages Common CSS - Header Navigation bar */
+/*nav bar*/
+.navbar{
+	display: flex;
+	justify-content: space-between;
+	align-items: center; 
+	background: rgb(255, 255, 255); /*header background color*/
+	width: 100%;
+	border-bottom: 0px solid rgb(255, 255, 255); /*just in case*/
+	padding: 0 15px;
+}
+.navbar_logo h1 img {
+	width: 200px;
+	height: 100%;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	margin-left: 30px;
+}
+
+.navbar_menu{
+	display: flex;	
+}
+
+.navbar_menu li a{ 
+	padding: 20px 20px;	/*spacing between lists*/
+	font: bold 15px/1"arial";
+	color: rgb(56, 55, 55); 
+	transition: all 0.3s;
+}
+
+.navbar_menu li a:hover {
+	background: rgb(240, 186, 186);
+	color: rgb(255, 255, 255);
+	border-radius: 10px;
+}
+
+.navbar_toggleBnt{
+	display: none;
+	position: absolute;
+	right: 24px;
+	padding-top: 24px;
+	font-size: 32px;
+	color: rgb(56, 55, 55);;
+}
+
+
+/* nav bar end*/
+/*main page - figure part*/
+
+figure {
+	width: 100%;
+	height: calc(100vh - 120px);
+	position: relative;
+	overflow: hidden;
+}
+
+figure video{
+	object-fit: cover;
+	width: 100%;
+	height: 100%;
+	opacity: 0.9;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	border-bottom: 1px solid rgb(255, 255, 255); /*bottom of line the video*/
+}
+
+figure .inner {
+	width: 1180px;
+	margin: 0px auto;
+	position: relative;
+} 
+
+
+figure .inner a {
+	display: block;
+	width: 300px;
+	height: 50px;
+	border: 4px solid rgb(104, 101, 101);
+	font: bold 20px/45px "arial";
+	color: rgb(43, 42, 42);
+	text-align: center;
+	letter-spacing: 1px;
+	transition: all 0.9s;
+	margin-top: 480px;
+	background: rgb(223, 218, 228);
+}
+
+figure .inner a:hover {
+	background: rgb(180, 179, 179);
+	color: rgb(114, 46, 46);
+}
+

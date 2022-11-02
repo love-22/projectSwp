@@ -21,8 +21,9 @@ const db = new sqlite3.Database('./test.db', sqlite3.OPEN_READWRITE | sqlite3.OP
   if (err) return console.error(err.message);
 });
 
-//Database (please do not when you productions....)
+//Database 
 const users = [];
+const products = [];
 
 //view engine setup
 app.set('view-engine', 'ejs');
@@ -34,6 +35,9 @@ app.use(session({
   resave: false,
   saveUninitialized: false
 }));
+
+//public folder
+app.use( express.static( "public" ) );
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -163,26 +167,33 @@ app.get('/productDetails', (req, res) => {
 });
 
 
-//productUpload page .........not working
-/* app.get('/productUpload', (req, res) => {
+//productUpload page ------ data is not getting stored in database
+app.get('/productUpload', (req, res) => {
   res.render('productUpload.ejs');
 });
 
-
 app.post('/productUpload', async (req, res) => {
-  try{
-  sql = `INSERT INTO products(name, price, description, image) VALUES (?, ?, ?, ?)`;
-  db.run(sql, [req.body.name, req.body.price, req.body.description, req.body.image], (err)=>{
-      if (err) return console.error(err.message);
-  })
-  res.redirect('/productDetails');
-  } catch{
+  try {
+    sql = `INSERT INTO products(productName, price, description, uploadImage) VALUES (?, ?, ?, ?)`;
+    db.run(sql, [req.body.productName, req.body.price, req.body.description, req.body.uploadImage], (err)=>{
+        if (err) return console.error(err.message);
+    })
+    res.redirect('/productDetails');
+  }catch{
     res.redirect('/productUpload');
   }
-}); */
+  console.log(products, "Update Products... :D");
+});
+
+
+//test.ejs page
+app.get('/test', (req, res) => {
+  res.render('test.ejs');
+});
 
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
+
