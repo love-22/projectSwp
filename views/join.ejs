@@ -105,6 +105,11 @@
        function validatePassword(){
          if(password.value.length < 8) {
            password2.setCustomValidity("length must be greater than 8");
+
+        //password must contain special character
+         } else if(!password.value.match(/[!@#$%^&*]/)){
+           password2.setCustomValidity("password must contain special character");
+           
        //password match
          } else if(password.value != password2.value){
            password2.setCustomValidity("Passwords Don't Match");
@@ -117,7 +122,7 @@
       
       </script>
 
-     <!--reCAPTCHAv2-->
+     <!--reCAPTCHAv2 Check Box-->
       <script src="https://www.google.com/recaptcha/api.js" async defer></script>
                 
     <footer class="card-footer text-muted py-5 bg-light mt-auto">

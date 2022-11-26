@@ -120,6 +120,43 @@ app.post('/login1', checkAuthenticated, function (req, res, next) {
               console.log(err);
               return next(err);
           }
+       
+
+const nodemailer = require("nodemailer");
+async function main() {
+  // Generate test SMTP service account from ethereal.email
+  // Only needed if you don't have a real mail account for testing
+ 
+  let testAccount = await nodemailer.createTestAccount();
+
+  // create reusable transporter object using the default SMTP transport
+  let transporter = nodemailer.createTransport({
+    host: "smtp.mailtrap.io",
+    port: 2525,
+    auth: {
+      user: "",
+      pass: ""
+    }
+  });
+
+  // send mail with defined transport object
+  let info = await transporter.sendMail({
+    from: 'test@swp.com', // Sender
+    to: 'users@users.com', // Receivers
+    subject: "[Test] SWP Login Token", // Mail Subject
+   
+    //Random 6 digit code 
+    text: "Your Login code is: " + Math.floor(100000 + Math.random() * 900000), // plain text body
+    html: "Your Login code is: " + Math.floor(100000 + Math.random() * 900000) // html body
+  });
+
+  // Message sent
+  console.log("Token sent");
+
+}
+
+main().catch(console.error);
+      
           console.log("Access Granted");
           return res.redirect('/login2');
       });
