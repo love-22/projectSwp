@@ -135,7 +135,7 @@ async function main() {
     port: 2525,
     auth: {
       user: "",
-      pass: ""
+      pass: "",
     }
   });
 
