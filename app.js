@@ -142,7 +142,7 @@ async function main() {
   // send mail with defined transport object
   let info = await transporter.sendMail({
     from: 'test@swp.com', // Sender
-    to: 'users@users.com', // Receivers
+    to: 'test@user.com', // Receivers
     subject: "[Test] SWP Login Token", // Mail Subject
    
     //Random 6 digit code 
