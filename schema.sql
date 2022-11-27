@@ -13,7 +13,18 @@ CREATE TABLE products(
     uploadImage TEXT NOT NULL,
 
 );
- 
+
+/*we need add token tables for user authentication
+
+CREATE TABLE tokens(
+    id INTEGER PRIMARY KEY,
+    token TEXT NOT NULL,
+    userId INTEGER NOT NULL,
+    FOREIGN KEY(userId) REFERENCES users(id)
+);
+
+*/
+
 /* CREATE TABLE orders(
     id INTEGER PRIMARY KEY,
     userId INTEGER NOT NULL,
