@@ -79,7 +79,7 @@ passport.deserializeUser(function (id, done) {
 function checkAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     console.log("I am inside checkauth isAuth");
-    return res.redirect('/');
+    return res.redirect('/main');
   }
   next();
 }
@@ -136,8 +136,8 @@ app.post('/login1', checkAuthenticated, function (req, res, next) {
           host: "smtp.mailtrap.io",
           port: 2525,
           auth: {
-            user: "",
-            pass: ""
+            user: "65d8df8beca01a",
+            pass: "b993a5d9acfee6"
           }
         });
        
@@ -191,7 +191,7 @@ app.post('/login2', function (req, res, next) {
   //if (tokens[email] == token) {
     if (tokens[Number] == token) {
     console.log("Access Granted");
-    return res.redirect('/');
+    return res.redirect('/main');
   }
   else {
     console.log("Access Denied");
@@ -218,6 +218,29 @@ app.post('/join', async (req, res) => {
   }
   console.log(users);
 });
+
+//logout
+app.get('/main', (req, res) => {
+  res.render('main.ejs');
+});
+
+//How can I destroy the session and redirect to the index page?
+app.post('/main', (req, res) => {
+  const logout = req.body.logout;
+  //logout session
+  if (logout == logout) {
+    req.session.destroy(function (err) {
+      if (err) {
+        console.log(err);
+        console.log("Error in logout");
+      } else {
+        res.redirect('/');
+        console.log("Logout successful");
+      }
+    });
+  }
+});
+
 
 //orderDetails page
 app.get('/orderDetails', (req, res) => {

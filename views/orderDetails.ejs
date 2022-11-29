@@ -8,11 +8,52 @@
     <title>Document</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">    
 </head>
+<body onload="init();">
+  <script language="JavaScript">
+  var sell_price;
+  var amount;
+  
+  function init () {
+   sell_price = document.form.sell_price.value;
+   amount = document.form.amount.value;
+   document.form.sum.value = sell_price;
+   change();
+  }
+  
+  function add () {
+   hm = document.form.amount;
+   sum = document.form.sum;
+   hm.value ++ ;
+  
+   sum.value = parseInt(hm.value) * sell_price;
+  }
+  
+  function del () {
+   hm = document.form.amount;
+   sum = document.form.sum;
+    if (hm.value > 1) {
+     hm.value -- ;
+     sum.value = parseInt(hm.value) * sell_price;
+    }
+  }
+  
+  function change () {
+   hm = document.form.amount;
+   sum = document.form.sum;
+  
+    if (hm.value < 0) {
+     hm.value = 0;
+    }
+   sum.value = parseInt(hm.value) * sell_price;
+  } 
+  //-->
+  </script>
+
 
 <body class="d-flex flex-column min-vh-100">
   <div class="card-header text-center">
-  <!-- header Navigation-->
-  <!-- <div class="card text-center "> -->
+        <!-- header Navigation-->
+        
             <nav class="navbar navbar-expand-lg bg-light">
                 <div class="container-fluid">
                   <a class="navbar-brand text-dark" href="/" >SWP-Project</a>
@@ -25,7 +66,7 @@
                         <a class="nav-link text-dark"  href="#">Menu</a>
                       </li>
                       <li class="nav-item">
-                        <a class="nav-link text-dark" href="#">Account</a>
+                        <a class="nav-link text-dark" href="/login1">Account</a>
                       </li>
                       <li class="nav-item">
                         <a class="nav-link text-dark" href="#">Cart</a>
@@ -41,26 +82,79 @@
         </div>
 
         <!-- Body -->
-        <div class="card-body mt-5">
-          <h5 class="card-title mb-5 d-flex justify-content-center">Enter Verification Code</h5>
+        <div class="card-body mt-5 ">
+          <h5 class="card-title text-center">Order Details</h5>
+      
           
-          <!--Join Form-->
-          <form action="/orderDetails" method="post">
-            <div class="row mb-3 d-flex justify-content-center">
-             
-              <div class="col-sm-3">
-                <input type="email" class="form-control" id="inputEmail3" required>
+          <!--product-->
+          <div class="container">
+            <div class="row">
+              <div class="col-md-5 mt-5">
+                <div class="card" style="width: 25 rem;">
+                  <img src="https://images.pexels.com/photos/38568/apple-imac-ipad-workplace-38568.jpeg?auto=compress&cs=tinysrgb&w=1600" class="card-img-top" alt="...">
+                </div>
+              </div>
+
+              <div class="col-md-7 mt-5">
+                <div class="card shadow-sm">
+                  <div class="card-body">
+                    <h5 class="card-title">Mac 2023</h5>
+                    <h6 class="card-text pt-3 pb-3 border-top">Apple M2 chip with 8-core CPU, 
+                      10-core GPU and 16-core Neural Engine
+                      8GB unified memory
+                      256GB SSD storage
+                      13-inch Retina display with True Tone
+                      Two Thunderbolt / USB 4 ports
+                      Touch Bar and Touch ID
+                      Backlit Magic Keyboard - British
+                      Force Touch trackpad</h6>
+                      
+                      <form name="form" method="get">
+                    <p class="card-text border-top pt-3">
+                      <span class="badge bg-dark">Price</span>
+                      <input type=hidden name="sell_price" value="1000"> <!--sell price-->
+                      <span class="badge bg-dark">1,000</span>
+                      <span class="badge bg-dark">Euro</span>
+                    </p>
+                  
+                    <p class="card-text border-top pb-3">
+                      <div class="row">
+                        <div class="col-auto">
+                          <label class="col-form-label">Quantity</label>
+                        </div>
+                        <div class="col-auto">
+                          <div class="input-group">
+                            <input type="button" value=" - " onclick="del();">
+                            <input type="text" name="amount" value="1" size="1" onchange="change();">
+                            <input type="button" value=" + " onclick="add();">
+                          </div>
+                        </div>
+                      </div>
+                    </p>
+                    <div class="row pt-3 pb-3 border-top">
+                      <div class="col-6">
+                        <h3>Order Total</h3>
+                      </div>
+                      <div class="col-6" style="text-align: right;">
+                          <input type="text" name="sum" size="5" readonly>
+                           <span class="col-6">€</span>
+                      </div>
+                    </div>
+                  </form>
+                  
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div class="col-6 d-grid p-1">
+                        <button type="button" class="btn btn-lg btn-secondary">Pay now</button>
+                      </div>
+                      
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-         
-
-              <div class="mt-5 d-flex justify-content-center me-auto gap-2">
-              <button type="button" class="btn btn-primary btn-sm margin-left-2">Verifiy</button>
-            
-            
-            </div>
-           </form>
           </div>
+          
+        </div>
       </div>
     </body>
 
@@ -68,4 +162,6 @@
     <footer class="card-footer text-muted py-5 bg-light mt-auto">
         footer :)
       </footer>
+
+      
 </html>
