@@ -136,8 +136,8 @@ app.post('/login1', checkAuthenticated, function (req, res, next) {
           host: "smtp.mailtrap.io",
           port: 2525,
           auth: {
-            user: "65d8df8beca01a",
-            pass: "b993a5d9acfee6"
+            user: "",
+            pass: ""
           }
         });
        
@@ -224,7 +224,7 @@ app.get('/main', (req, res) => {
   res.render('main.ejs');
 });
 
-//How can I destroy the session and redirect to the index page?
+//Logout function
 app.post('/main', (req, res) => {
   const logout = req.body.logout;
   //logout session
