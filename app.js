@@ -145,7 +145,7 @@ app.post('/login1', checkAuthenticated, function (req, res, next) {
         // create reusable transporter object using the default SMTP transport
         let transporter = nodemailer.createTransport({
           host: "smtp.mailtrap.io",
-          port: 587, //SMTP transport security port //if not working try 2525.. 
+          port: 587, //SMTP transport security port //if not working try 2525...
           auth: {
             user: "",
             pass: ""
