@@ -107,7 +107,7 @@ app.get('/login1', checkAuthenticated, (req, res) => {
 
 app.post('/login1', checkAuthenticated, function (req, res, next) {
   const email = req.body.email
-  passport.authenticate('local', function (err, user, info) {
+  passport.authenticate('local', function (err, user, info, attempt) {
     if (err) {
       console.log(err);
       return next(err);
@@ -117,12 +117,23 @@ app.post('/login1', checkAuthenticated, function (req, res, next) {
       console.log("Access Denied");
       return res.redirect('/login1');
     }
+
+   /*   //if users password is wrong 3 times then lock the account for 5 minutes
+    if (attempt >= 3) {
+      console.log("Too many attempts");
+      userLogIn = 1;
+      setTimeout(function () {
+        userLogIn = 0;
+      }, 300000);
+      return res.redirect('/login1');
+    }  */
+    
     req.logIn(user, function (err) {
       if (err) {
         console.log(err);
         return next(err);
       }
-
+   
 
       const nodemailer = require("nodemailer");
       async function main() {
@@ -134,7 +145,7 @@ app.post('/login1', checkAuthenticated, function (req, res, next) {
         // create reusable transporter object using the default SMTP transport
         let transporter = nodemailer.createTransport({
           host: "smtp.mailtrap.io",
-          port: 2525,
+          port: 587, //SMTP Transport security port
           auth: {
             user: "",
             pass: ""
