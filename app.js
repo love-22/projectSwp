@@ -118,7 +118,7 @@ app.post('/login1', checkAuthenticated, function (req, res, next) {
       return res.redirect('/login1');
     }
 
-   /*   //if users password is wrong 3 times then lock the account for 5 minutes
+     //if users password is wrong 3 times then lock the account for 5 minutes
     if (attempt >= 3) {
       console.log("Too many attempts");
       userLogIn = 1;
@@ -126,7 +126,7 @@ app.post('/login1', checkAuthenticated, function (req, res, next) {
         userLogIn = 0;
       }, 300000);
       return res.redirect('/login1');
-    }  */
+    } 
     
     req.logIn(user, function (err) {
       if (err) {
@@ -145,7 +145,7 @@ app.post('/login1', checkAuthenticated, function (req, res, next) {
         // create reusable transporter object using the default SMTP transport
         let transporter = nodemailer.createTransport({
           host: "smtp.mailtrap.io",
-          port: 587, //SMTP Transport security port
+          port: 587, //SMTP transport security port //if not working try 2525.. 
           auth: {
             user: "",
             pass: ""
