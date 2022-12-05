@@ -118,7 +118,7 @@ app.post('/login1', checkAuthenticated, function (req, res, next) {
       return res.redirect('/login1');
     }
 
-     //if users password is wrong 3 times then lock the account for 5 minutes
+     //if users password is wrong 3 times then lock the account for 5 minutes 
     if (attempt >= 3) {
       console.log("Too many attempts");
       userLogIn = 1;
@@ -145,10 +145,10 @@ app.post('/login1', checkAuthenticated, function (req, res, next) {
         // create reusable transporter object using the default SMTP transport
         let transporter = nodemailer.createTransport({
           host: "smtp.mailtrap.io",
-          port: 587, //SMTP transport security port //if not working try 2525...
+          port: 587, //SMTP transport security port //if not working try 2525.. 
           auth: {
-            user: "",
-            pass: ""
+            user: "65d8df8beca01a",
+            pass: "b993a5d9acfee6"
           }
         });
        
@@ -288,6 +288,26 @@ app.get('/test', (req, res) => {
   res.render('test.ejs');
 });
 
+
+//userDashboard.ejs page
+app.get('/userDashboard', (req, res) => {
+  res.render('userDashboard.ejs');
+});
+
+//userDashboardEdit.ejs page
+app.get('/userDashboardEdit', (req, res) => {
+  res.render('userDashboardEdit.ejs');
+});
+
+//adminDashboard.ejs page
+app.get('/adminDashboard', (req, res) => {
+  res.render('adminDashboard.ejs');
+});
+
+//writeReview.ejs page
+app.get('/writeReview', (req, res) => {
+  res.render('writeReview.ejs');
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
