@@ -147,8 +147,8 @@ app.post('/login1', checkAuthenticated, function (req, res, next) {
           host: "smtp.mailtrap.io",
           port: 587, //SMTP transport security port //if not working try 2525.. 
           auth: {
-            user: "65d8df8beca01a",
-            pass: "b993a5d9acfee6"
+            user: "e9702670857b2c",
+            pass: "2e6f61e062e02a"
           }
         });
        
