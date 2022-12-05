@@ -110,9 +110,9 @@
          } else if(password.value.match(/\s/)){
            password2.setCustomValidity("password not allowed to contain space");
 
-        //password not allowed contain special character
-         } else if(password.value.match(/[!@#$%^&*]/)){
-           password2.setCustomValidity("password not allowed contain special character");
+        // //password not allowed contain special character
+        //  } else if(password.value.match(/[!@#$%^&*]/)){
+        //    password2.setCustomValidity("password not allowed contain special character");
 
         //password not allowed use same character more than 3 times
          } else if(password.value.match(/(.)\1{2,}/)){
