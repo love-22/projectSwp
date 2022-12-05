@@ -3,6 +3,9 @@ CREATE TABLE users(
     name TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
+    phone TEXT DEFAULT '0830000000',
+    address TEXT DEFAULT 'IFSC NCI',
+    role TEXT DEFAULT 'Customer'
 );
 
 CREATE TABLE products(

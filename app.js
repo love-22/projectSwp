@@ -44,6 +44,7 @@ app.use(passport.session());
 
 const userLogIn = "SELECT id, email, password FROM users WHERE email = $1;";
 const findUserbyID = "SELECT id FROM users WHERE id = $1;";
+const findAllbyID = "SELECT name, email, phone, address FROM users WHERE id = $1;";
 
 passport.use(new LocalStrategy({ usernameField: 'email', passwordField: 'password' },
   function (email, password, done) {
@@ -147,8 +148,8 @@ app.post('/login1', checkAuthenticated, function (req, res, next) {
           host: "smtp.mailtrap.io",
           port: 587, //SMTP transport security port //if not working try 2525.. 
           auth: {
-            user: "65d8df8beca01a",
-            pass: "b993a5d9acfee6"
+            user: "e9702670857b2c",
+            pass: "2e6f61e062e02a"
           }
         });
        
@@ -291,12 +292,85 @@ app.get('/test', (req, res) => {
 
 //userDashboard.ejs page
 app.get('/userDashboard', (req, res) => {
-  res.render('userDashboard.ejs');
+  const query = db.prepare(findAllbyID);
+  query.get(req.user.id, function (err, row) {
+    console.log(row.name);
+    console.log(row.email);
+    console.log(row.phone);
+    console.log(row.address);
+    res.render('userDashboard.ejs', { name: row.name, 
+                                      email: row.email,
+                                      phone: row.phone,
+                                      address: row.address});
+  });
 });
 
 //userDashboardEdit.ejs page
 app.get('/userDashboardEdit', (req, res) => {
-  res.render('userDashboardEdit.ejs');
+  const query = db.prepare(findAllbyID);
+  query.get(req.user.id, function (err, row) {
+    console.log(row.name);
+    console.log(row.email);
+    res.render('userDashboardEdit.ejs', { name: row.name, 
+                                          email: row.email,
+                                          phone: row.phone,
+                                          address: row.address});
+  });
+});
+
+app.post('/userDashboardEdit', async (req, res) => {
+  if (req.body.checkedbox){
+    passport.authenticate('local', async function (err, user, info) {
+      if (err) {
+        console.log(err);
+        return next(err);
+      }
+      if (!user) {
+        console.log(info);
+        console.log("Access Denied");
+        return res.redirect('/userDashboardEdit');
+      }
+
+      console.log("correct");
+
+      if(req.body.repassword === req.body.repassword2) {
+        try {
+          const hashedPassword = await bcrypt.hash(req.body.repassword, 10);
+          sql = `UPDATE users SET name = ?, email = ?, phone = ?, address = ?, password = ? WHERE id = ?`;
+          db.run(sql, [req.body.name, req.body.email, req.body.phone, req.body.address, hashedPassword,req.user.id], (err) => {
+            if (err) return console.error(err.message);
+          })
+          res.redirect('/userDashboard');
+        } catch {
+          res.redirect('/userDashboardEdit');
+        }
+      }
+
+    })(req, res);
+  } else {
+    passport.authenticate('local', function (err, user, info) {
+      if (err) {
+        console.log(err);
+        return next(err);
+      }
+      if (!user) {
+        console.log(info);
+        console.log("Access Denied");
+        return res.redirect('/userDashboardEdit');
+      }
+
+      console.log("correct");
+      try {
+        sql = `UPDATE users SET name = ?, email = ?, phone = ?, address = ? WHERE id = ?`;
+        db.run(sql, [req.body.name, req.body.email, req.body.phone, req.body.address, req.user.id], (err) => {
+          if (err) return console.error(err.message);
+        })
+        res.redirect('/userDashboard');
+      } catch {
+        res.redirect('/userDashboardEdit');
+      }
+    })(req, res);
+  }
 });
 
 //adminDashboard.ejs page
@@ -309,8 +383,31 @@ app.get('/writeReview', (req, res) => {
   res.render('writeReview.ejs');
 });
 
+app.post('/deleteAccount', (req, res) => {
+  try {
+    let accountID = req.user.id;
+    sql = `DELETE FROM users WHERE id = ?`;
+
+    req.session.destroy(function (err) {
+      if (err) {
+        console.log(err);
+        console.log("Error in logout");
+      } else {
+        console.log("Logout successful");
+      }
+    });
+
+    db.run(sql, [accountID], (err) => {
+      if (err) return console.error(err.message);
+    })
+
+    res.redirect('/login1');
+  } catch {
+    res.redirect('/userDashboard');
+  }
+})
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-
