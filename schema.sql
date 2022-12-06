@@ -8,6 +8,13 @@ CREATE TABLE users(
     role TEXT DEFAULT 'Customer'
 );
 
+INSERT INTO users(name, email, password, role) VALUES ('Eduard', 'e@e.com', '$2b$10$6uZtu4CVNG378HXpkfwsjumXVWzenACbfYG7QVFdDmC4MklUxOwlu', 'Admin');
+
+INSERT INTO users(name, email, password) VALUES ('John', 'j@j.com', '$2b$10$po3DZmFAntAhYYCSqZQ7UuC8EItx762MeKRVLIQe.ga0GpgzlLgi.');
+
+INSERT INTO users(name, email, password) VALUES ('Sarah', 's@s.com', '$2b$10$che2OeUAg9ZnFHcC/uxrBuXbB0CTwF/6g8qiIQN9KQmCym5MqzGsK');
+
+
 CREATE TABLE products(
     id INTEGER PRIMARY KEY,
     productName TEXT NOT NULL,

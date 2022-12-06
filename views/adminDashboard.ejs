@@ -73,57 +73,44 @@
                       </div>
                       <hr>
                       
-                   
-
-                      <div class="row">
-                        <div class="col-sm-3">
-                          <p class="text-muted mb-0">1</p>
-                        </div>
-                        <div class="col-sm-3">
-                            <p class="text-muted mb-0">Tester</p>
+                      
+                      <% for(var i = 0; i < length; i++) {%>
+                        <div class="row">
+                          <div class="col-sm-3">
+                            <p class="text-muted mb-0">
+                              <li style="list-style: none;"><%=id[i]%></li>
+                            </p>
                           </div>
                           <div class="col-sm-3">
-                            <p class="text-muted mb-0">test@test.com</p>
-                          </div>
-                      </div>
-
-
-                      <div class="row">
-                        <div class="col-sm-3">
-                          <p class="text-muted mb-0">2</p>
-                        </div>
-                        <div class="col-sm-3">
-                            <p class="text-muted mb-0">Tester</p>
+                            <p class="text-muted mb-0">
+                              <li style="list-style: none;"><%=name[i]%></li>
+                            </p>
                           </div>
                           <div class="col-sm-3">
-                            <p class="text-muted mb-0">test@test.com</p>
+                            <p class="text-muted mb-0">
+                              <li style="list-style: none;"><%=email[i]%></li>
+                            </p>
                           </div>
-                      </div>
-
-                      <div class="row">
-                        <div class="col-sm-3">
-                          <p class="text-muted mb-0">3</p>
                         </div>
-                        <div class="col-sm-3">
-                            <p class="text-muted mb-0">Tester</p>
+                      <% } %>
+                        <!-- <div class="row">
+                          <div class="col-sm-3">
+                            <p class="text-muted mb-0"><% id.forEach((item) =>{ %>
+                              <li style="list-style: none;"><%=item%></li>
+                            <%}) %></p>
                           </div>
                           <div class="col-sm-3">
-                            <p class="text-muted mb-0">test@test.com</p>
-                          </div>
-                      </div>
-
-                      <div class="row">
-                        <div class="col-sm-3">
-                          <p class="text-muted mb-0">4</p>
-                        </div>
-                        <div class="col-sm-3">
-                            <p class="text-muted mb-0">Tester</p>
+                            <p class="text-muted mb-0"><% name.forEach((item) =>{ %>
+                              <li style="list-style: none;"><%=item%></li>
+                            <%}) %></p>
                           </div>
                           <div class="col-sm-3">
-                            <p class="text-muted mb-0">test@test.com</p>
+                            <p class="text-muted mb-0"><% email.forEach((item) =>{ %>
+                              <li style="list-style: none;"><%=item%></li>
+                            <%}) %></p>
                           </div>
-                      </div>
-
+                        </div> -->
+                      
 
                       </div>
                     </div>
@@ -136,9 +123,6 @@
             <footer class="card-footer text-muted py-5 bg-light mt-auto">
               </footer>
           </section>
-
-          
-         
       </div>
     </body>
     </html>
