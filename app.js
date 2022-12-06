@@ -33,7 +33,10 @@ app.use(flash());
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  // cookie: {
+  //   expires: 60000
+  // }
 }));
 
 //public folder
@@ -44,7 +47,11 @@ app.use(passport.session());
 
 const userLogIn = "SELECT id, email, password FROM users WHERE email = $1;";
 const findUserbyID = "SELECT id FROM users WHERE id = $1;";
-const findAllbyID = "SELECT name, email, phone, address FROM users WHERE id = $1;";
+const findAllbyID = "SELECT name, email, phone, address, role FROM users WHERE id = $1;";
+const findAllCustomers = "SELECT id, name, email, phone, address, role FROM users WHERE role = $1;";
+
+// Not needed. Remove later.
+//const amountOfCustomers = "SELECT id, name, email, phone, address, role FROM users WHERE role = $1;";
 
 passport.use(new LocalStrategy({ usernameField: 'email', passwordField: 'password' },
   function (email, password, done) {
@@ -292,6 +299,7 @@ app.get('/test', (req, res) => {
 
 //userDashboard.ejs page
 app.get('/userDashboard', (req, res) => {
+  // If admin?
   const query = db.prepare(findAllbyID);
   query.get(req.user.id, function (err, row) {
     console.log(row.name);
@@ -307,6 +315,7 @@ app.get('/userDashboard', (req, res) => {
 
 //userDashboardEdit.ejs page
 app.get('/userDashboardEdit', (req, res) => {
+  // If admin?
   const query = db.prepare(findAllbyID);
   query.get(req.user.id, function (err, row) {
     console.log(row.name);
@@ -375,7 +384,50 @@ app.post('/userDashboardEdit', async (req, res) => {
 
 //adminDashboard.ejs page
 app.get('/adminDashboard', (req, res) => {
-  res.render('adminDashboard.ejs');
+  // If admin
+  const query = db.prepare(findAllbyID);
+  query.get(req.user.id, function (err, row) {
+    console.log(row.role);
+    if (row.role == 'Admin') {
+      const query2 = db.prepare(findAllCustomers);
+      query2.all('Customer', function (err, rows) {
+        console.log("Inside only customers query")
+        console.log(rows);
+        console.log("-------");
+        console.log(rows[0]);
+        console.log("-------");
+        console.log(rows[0].name);
+        console.log(rows.length)
+        let x = 0;
+        let id = [];
+        let name = [];
+        let email = [];
+        while(x!=rows.length) {
+          id.push(rows[x].id);
+          name.push(rows[x].name);
+          email.push(rows[x].email);
+          x++;
+        }
+        console.log(id)
+        console.log(name)
+        console.log(email)
+        res.render('adminDashboard.ejs', {length:rows.length,
+                                          id:id,
+                                          name:name,
+                                          email:email});
+      });
+
+      
+      console.log("Role is admin");
+    } else {
+      console.log("Role is other");
+      res.redirect('/userDashboard');
+    }
+    // res.render('userDashboard.ejs', { name: row.name, 
+    //                                   email: row.email,
+    //                                   phone: row.phone,
+    //                                   address: row.address});
+  });
 });
 
 //writeReview.ejs page
