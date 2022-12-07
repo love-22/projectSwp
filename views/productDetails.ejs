@@ -12,6 +12,12 @@
   <script language="JavaScript">
   var sell_price;
   var amount;
+  window.onload=function(){
+    console.log(window.location);
+    console.log("<%=img%>");
+    
+  }
+
   
   function init () {
    sell_price = document.form.sell_price.value;
@@ -91,29 +97,21 @@
             <div class="row">
               <div class="col-md-5 mt-5">
                 <div class="card" style="width: 25 rem;">
-                  <img src="https://images.pexels.com/photos/38568/apple-imac-ipad-workplace-38568.jpeg?auto=compress&cs=tinysrgb&w=1600" class="card-img-top" alt="...">
+                  <img src="../<%=img%>" alt="<%=name%> Image">
                 </div>
               </div>
 
               <div class="col-md-7 mt-5">
                 <div class="card shadow-sm">
                   <div class="card-body">
-                    <h5 class="card-title">Mac 2023</h5>
-                    <h6 class="card-text pt-3 pb-3 border-top">Apple M2 chip with 8-core CPU, 
-                      10-core GPU and 16-core Neural Engine
-                      8GB unified memory
-                      256GB SSD storage
-                      13-inch Retina display with True Tone
-                      Two Thunderbolt / USB 4 ports
-                      Touch Bar and Touch ID
-                      Backlit Magic Keyboard - British
-                      Force Touch trackpad</h6>
+                    <h5 class="card-title"><%=name%></h5>
+                    <h6 class="card-text pt-3 pb-3 border-top"><%=desc%></h6>
                       
                       <form name="form" method="get">
                     <p class="card-text border-top pt-3">
-                      <span class="badge bg-dark">Price</span>
-                      <input type=hidden name="sell_price" value="1000"> <!--sell price-->
-                      <span class="badge bg-dark">1,000</span>
+                      <span class="badge bg-dark">Price:</span>
+                      <input type=hidden name="sell_price" value="<%=price%>"> <!--sell price-->
+                      <span class="badge bg-dark"><%=price%></span>
                       <span class="badge bg-dark">Euro</span>
                     </p>
                   

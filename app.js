@@ -50,6 +50,7 @@ const findUserbyID = "SELECT id FROM users WHERE id = $1;";
 const findAllbyID = "SELECT name, email, phone, address, role FROM users WHERE id = $1;";
 const findAllCustomers = "SELECT id, name, email, phone, address, role FROM users WHERE role = $1;";
 const findAllProducts = "SELECT id, productName, productPrice, productDesc, productImg, ProductCreationDate FROM product";
+const findProductById = "SELECT productName, productPrice, productDesc, productImg, ProductCreationDate FROM product WHERE id = $1";
 
 // Not needed. Remove later.
 //const amountOfCustomers = "SELECT id, name, email, phone, address, role FROM users WHERE role = $1;";
@@ -289,10 +290,16 @@ app.get('/orderDetails', (req, res) => {
 });
 
 //productDetails page
-app.get('/productDetails', (req, res) => {
-  res.render('productDetails.ejs');
+app.get('/productDetails/:id', (req, res) => {
+  console.log(req.params.id);
+  const query = db.prepare(findProductById);
+  query.get(req.params.id, function (err, row) {
+    res.render('productDetails.ejs', {name:row.productName,
+                                      img:row.productImg,
+                                      price:row.productPrice/100,
+                                      desc:row.productDesc});
+  });
 });
-
 
 //productUpload page ------ data is not getting stored in database
 app.get('/productUpload', (req, res) => {
@@ -467,8 +474,7 @@ app.post('/deleteAccount', (req, res) => {
 })
 
 app.post('/goToProduct', function (req, res, next) {
-    console.log(req.body.goProduct);
-    res.redirect('/');
+    res.redirect('/productDetails/' + req.body.goProduct);
 })
 
 const port = process.env.PORT || 3000;
