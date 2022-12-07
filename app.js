@@ -88,7 +88,7 @@ passport.deserializeUser(function (id, done) {
 function checkAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     console.log("I am inside checkauth isAuth");
-    return res.redirect('/main');
+    return res.redirect('/');
   }
   next();
 }
@@ -237,7 +237,7 @@ app.post('/login2', function (req, res, next) {
   //if (tokens[email] == token) {
     if (tokens[Number] == token) {
     console.log("Access Granted");
-    return res.redirect('/main');
+    return res.redirect('/');
   }
   else {
     console.log("Access Denied");
@@ -263,37 +263,6 @@ app.post('/join', async (req, res) => {
     res.redirect('/join');
   }
   console.log(users);
-});
-
-//logout
-app.get('/main', (req, res) => {
-  const query = db.prepare(findAllProducts);
-  query.all(function (err, rows) {
-        let tempPrice = 0;
-        let x = 0;
-        let id = [];
-        let productName = [];
-        let productPrice = [];
-        let productDesc = [];
-        let productImg = [];
-        let ProductCreationDate = [];
-        while(x!=rows.length) {
-          tempPrice = "€" + rows[x].productPrice/100;
-          id.push(rows[x].id);
-          productName.push(rows[x].productName);
-          productPrice.push(tempPrice);
-          productDesc.push(rows[x].productDesc);
-          productImg.push(rows[x].productImg);
-          ProductCreationDate.push(rows[x].ProductCreationDate);
-          x++;
-        }
-        res.render('main.ejs', {id:id,
-                                 name:productName,
-                                 desc:productDesc,
-                                 price:productPrice,
-                                 img:productImg,
-                                 length:rows.length})
-  });
 });
 
 //Logout function
