@@ -57,61 +57,25 @@
           
           <!--product-->
             <div class="row mt-5 mb-5">
-              <div class="col-3">
-                <div class="card">
-                  <div class="card-header">
-                    Category
-                  </div>
-                  <img src="images/card-image.png" alt="" />
-                  <div class="card-body">
-                    <h5 class="card-title">Product Name1</h5>
-                    <p class="card-text">Product Description</p>
-                    <a class="btn btn-primary"  href="/productDetails">Details</a>
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-3">
-                <div class="card">
-                  <div class="card-header">
-                    Category
-                  </div>
-                  <img src="images/card-image.png" alt="" />
-                  <div class="card-body">
-                    <h5 class="card-title">Product Name2</h5>
-                    <p class="card-text">Product Description</p>
-                    <a class="btn btn-primary"  href="/productDetails">Details</a>
+              <% for(var i = 0; i < length; i++) {%>
+                <div class="col-3">
+                  <div class="card">
+                      <div class="card-header">
+                          <!-- Category -->
+                        </div>
+                        <img src="<%=img[i]%>" alt="" />
+                        <div class="card-body">
+                          <h5 class="card-title"><%=name[i]%></h5>
+                          <p class="card-text"><%=desc[i]%></p>
+                          <p class="card-text"><%=price[i]%></p>
+                          <form action="/goToProduct" method="post">
+                            <input type="hidden" name="goProduct" value="<%=id[i]%>">
+                            <button type="submit" class="btn btn-primary">Details</button>
+                          </form>
+                        </div>
                   </div>
                 </div>
-              </div>
-
-              <div class="col-3">
-                <div class="card">
-                    <div class="card-header">
-                        Category
-                      </div>
-                      <img src="images/card-image.png" alt="" />
-                      <div class="card-body">
-                        <h5 class="card-title">Product Name3</h5>
-                        <p class="card-text">Product Description</p>
-                        <a class="btn btn-primary"  href="/productDetails">Details</a>
-                      </div>
-                </div>
-              </div>
-
-              <div class="col-3">
-                <div class="card">
-                    <div class="card-header">
-                        Category
-                      </div>
-                      <img src="images/card-image.png" alt="" />
-                      <div class="card-body">
-                        <h5 class="card-title">Product Name4</h5>
-                        <p class="card-text">Product Description</p>
-                        <a class="btn btn-primary"  href="/productDetails">Details</a>
-                      </div>
-                </div>
-              </div>
+          <% } %>
             </div>
           </div>
           

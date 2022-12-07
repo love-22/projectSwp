@@ -49,6 +49,7 @@ const userLogIn = "SELECT id, email, password FROM users WHERE email = $1;";
 const findUserbyID = "SELECT id FROM users WHERE id = $1;";
 const findAllbyID = "SELECT name, email, phone, address, role FROM users WHERE id = $1;";
 const findAllCustomers = "SELECT id, name, email, phone, address, role FROM users WHERE role = $1;";
+const findAllProducts = "SELECT id, productName, productPrice, productDesc, productImg, ProductCreationDate FROM product";
 
 // Not needed. Remove later.
 //const amountOfCustomers = "SELECT id, name, email, phone, address, role FROM users WHERE role = $1;";
@@ -97,7 +98,33 @@ app.use(express.urlencoded({ extended: false })); //this is to accept data in ur
 
 //Main page
 app.get('/', (req, res) => {
-  res.render('index.ejs')
+  const query = db.prepare(findAllProducts);
+  query.all(function (err, rows) {
+        let tempPrice = 0;
+        let x = 0;
+        let id = [];
+        let productName = [];
+        let productPrice = [];
+        let productDesc = [];
+        let productImg = [];
+        let ProductCreationDate = [];
+        while(x!=rows.length) {
+          tempPrice = "€" + rows[x].productPrice/100;
+          id.push(rows[x].id);
+          productName.push(rows[x].productName);
+          productPrice.push(tempPrice);
+          productDesc.push(rows[x].productDesc);
+          productImg.push(rows[x].productImg);
+          ProductCreationDate.push(rows[x].ProductCreationDate);
+          x++;
+        }
+        res.render('index.ejs', {id:id,
+                                 name:productName,
+                                 desc:productDesc,
+                                 price:productPrice,
+                                 img:productImg,
+                                 length:rows.length})
+  });
 });
 
 
@@ -240,7 +267,33 @@ app.post('/join', async (req, res) => {
 
 //logout
 app.get('/main', (req, res) => {
-  res.render('main.ejs');
+  const query = db.prepare(findAllProducts);
+  query.all(function (err, rows) {
+        let tempPrice = 0;
+        let x = 0;
+        let id = [];
+        let productName = [];
+        let productPrice = [];
+        let productDesc = [];
+        let productImg = [];
+        let ProductCreationDate = [];
+        while(x!=rows.length) {
+          tempPrice = "€" + rows[x].productPrice/100;
+          id.push(rows[x].id);
+          productName.push(rows[x].productName);
+          productPrice.push(tempPrice);
+          productDesc.push(rows[x].productDesc);
+          productImg.push(rows[x].productImg);
+          ProductCreationDate.push(rows[x].ProductCreationDate);
+          x++;
+        }
+        res.render('main.ejs', {id:id,
+                                 name:productName,
+                                 desc:productDesc,
+                                 price:productPrice,
+                                 img:productImg,
+                                 length:rows.length})
+  });
 });
 
 //Logout function
@@ -384,20 +437,12 @@ app.post('/userDashboardEdit', async (req, res) => {
 
 //adminDashboard.ejs page
 app.get('/adminDashboard', (req, res) => {
-  // If admin
   const query = db.prepare(findAllbyID);
   query.get(req.user.id, function (err, row) {
     console.log(row.role);
     if (row.role == 'Admin') {
       const query2 = db.prepare(findAllCustomers);
       query2.all('Customer', function (err, rows) {
-        console.log("Inside only customers query")
-        console.log(rows);
-        console.log("-------");
-        console.log(rows[0]);
-        console.log("-------");
-        console.log(rows[0].name);
-        console.log(rows.length)
         let x = 0;
         let id = [];
         let name = [];
@@ -408,9 +453,6 @@ app.get('/adminDashboard', (req, res) => {
           email.push(rows[x].email);
           x++;
         }
-        console.log(id)
-        console.log(name)
-        console.log(email)
         res.render('adminDashboard.ejs', {length:rows.length,
                                           id:id,
                                           name:name,
@@ -423,10 +465,6 @@ app.get('/adminDashboard', (req, res) => {
       console.log("Role is other");
       res.redirect('/userDashboard');
     }
-    // res.render('userDashboard.ejs', { name: row.name, 
-    //                                   email: row.email,
-    //                                   phone: row.phone,
-    //                                   address: row.address});
   });
 });
 
@@ -457,6 +495,11 @@ app.post('/deleteAccount', (req, res) => {
   } catch {
     res.redirect('/userDashboard');
   }
+})
+
+app.post('/goToProduct', function (req, res, next) {
+    console.log(req.body.goProduct);
+    res.redirect('/');
 })
 
 const port = process.env.PORT || 3000;
