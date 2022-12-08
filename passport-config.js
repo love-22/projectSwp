@@ -1,29 +1,48 @@
-// const LocalStrategy = require('passport-local').Strategy
-// const bcrypt = require('bcrypt')
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const {db} = require('./database');
+const {userLogIn, findUserbyID} = require('./database');
+const bcrypt = require('bcrypt');
 
-// function initialize(passport, getUserByEmail, getUserById) {
-//   const authenticateUser = async (email, password, done) => {
-//     const user = getUserByEmail(email)
-//     if (user == null) {
-//       return done(null, false, { message: 'No user with that email' })
-//     }
-//     console.log("Im here");
-//     try {
-//       if (await bcrypt.compare(password, user.password)) {
-//         return done(null, user)
-//       } else {
-//         return done(null, false, { message: 'Password incorrect' })
-//       }
-//     } catch (e) {
-//       return done(e)
-//     }
-//   }
+passport.use(new LocalStrategy({ usernameField: 'email', passwordField: 'password' },
+  function (email, password, done) {
+    const query = db.prepare(userLogIn);
+    query.get(email, async function (err, row) {
+      if (err) { return done(err); }
+      if (!row) { return done(null, false, { message: 'User not found.' }); }
+      if (await bcrypt.compare(password, row.password)) {
+        done(null, { id: row.id });
+        console.log(row);
+      }
+      else {
+        return done(null, false, { message: 'Incorrect password' });
+      }
+    });
+  }
+));
 
-//   passport.use(new LocalStrategy({ usernameField: 'email' }, authenticateUser))
-//   passport.serializeUser((user, done) => done(null, user.id))
-//   passport.deserializeUser((id, done) => {
-//     return done(null, getUserById(id))
-//   })
-// }
+passport.serializeUser(function (user, done) {
+  console.log("In serialize");
+  done(null, user.id);
+});
 
-// module.exports = initialize
+passport.deserializeUser(function (id, done) {
+  console.log("In deserialize");
+  const query = db.prepare(findUserbyID);
+  query.get(id, function (err, row) {
+    done(err, row);
+  });
+});
+
+const checkAuthenticated = (req, res, next) => {
+    if (req.isAuthenticated()) {
+      console.log("I am inside checkauth isAuth");
+      return res.redirect('/');
+    }
+    next();
+  }
+
+module.exports = {
+    passport,
+    checkAuthenticated
+};
