@@ -1,6 +1,7 @@
 const nodemailer = require("nodemailer");
 const {passport} = require('../passport-config');
 const tokens = {};
+const {db, findUserToken, updateTwoFA} = require('../database');
 
 const getLogin = (req, res) => {
     res.render('login1.ejs');
@@ -36,7 +37,7 @@ const postLogin = (req, res, next) => {
           return next(err);
         }
   
-        sendMail(email).catch(console.error);
+        sendMail(email, req).catch(console.error);
   
         console.log("Access Granted");
         return res.redirect('/login2');
@@ -44,7 +45,7 @@ const postLogin = (req, res, next) => {
     })(req, res, next);
 };
 
-async function sendMail(email) {
+async function sendMail(email, req) {
     // Generate test SMTP service account from ethereal.email
     // Only needed if you don't have a real mail account for testing
 
@@ -63,9 +64,10 @@ async function sendMail(email) {
     //token random 6 digits code
     const token = Math.floor(100000 + Math.random() * 900000);
 
-    tokens[Number] = token;
-    // tokens[email] = token;
-
+    db.run(updateTwoFA, [token, req.user.id], (err) => {
+      if (err) return console.error(err.message);
+    });
+    
     // send mail with defined transport object
     let info = await transporter.sendMail({
     from: 'test@swp.com', // Sender
@@ -89,14 +91,20 @@ const postLogin2FA = (req, res, next) => {
     //const email = req.body.email
     const token = req.body.token
     //if (tokens[email] == token) {
-    if (tokens[Number] == token) {
-      console.log("Access Granted");
-      return res.redirect('/');
-    }
-    else {
-      console.log("Access Denied");
-      return res.redirect('/login2');
-    }
+    // FINDING USER TOKEN SHOULD BE COMPLETED HERE... ALREADY DONE.
+    const query = db.prepare(findUserToken);
+    query.get(req.user.id, function (err, row) {
+      console.log(row.token);
+      if (row.token == token) {
+        console.log("Access Granted");
+        return res.redirect('/');
+      }
+      else {
+        console.log("Access Denied");
+        return res.redirect('/login2');
+      }
+    });
+
 }
 
 module.exports = {

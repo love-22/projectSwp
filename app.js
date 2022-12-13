@@ -32,8 +32,6 @@ app.use(passport.session());
 let sql;
 const products = [];
 
-const findProductById = "SELECT productName, productPrice, productDesc, productImg, ProductCreationDate FROM product WHERE id = $1";
-
 app.use(express.urlencoded({ extended: false })); //this is to accept data in urlencoded format
 
 ///////////////////////////////////////////////////////////////
@@ -43,6 +41,8 @@ app.use(express.urlencoded({ extended: false })); //this is to accept data in ur
 app.get('/', getMain);
 
 app.post('/main', postLogout);
+
+app.post('/goToProduct', goToProductOnClick);
 
 ///////////////////////////////////////////////////////////////
 // Login
@@ -69,6 +69,8 @@ app.post('/join', postRegister);
 ///////////////////////////////////////////////////////////////
 
 app.get('/userDashboard', getUserDashboard);
+
+app.post('/deleteAccount', userDeletesAccount);
 
 app.get('/userDashboardEdit', getUserDashboardEdit);
 
@@ -114,10 +116,6 @@ app.get('/test', (req, res) => {
 app.get('/writeReview', (req, res) => {
   res.render('writeReview.ejs');
 });
-
-app.post('/deleteAccount', userDeletesAccount);
-
-app.post('/goToProduct', goToProductOnClick);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
