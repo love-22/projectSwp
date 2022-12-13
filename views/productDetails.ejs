@@ -17,6 +17,7 @@
    sell_price = document.form.sell_price.value;
    amount = document.form.amount.value;
    document.form.sum.value = sell_price;
+   document.getElementById('productQuantity').value = parseInt(amount);
    change();
   }
   
@@ -26,6 +27,7 @@
    hm.value ++ ;
   
    sum.value = parseInt(hm.value) * sell_price;
+   document.getElementById('productQuantity').value = parseInt(hm.value);
   }
   
   function del () {
@@ -34,6 +36,7 @@
     if (hm.value > 1) {
      hm.value -- ;
      sum.value = parseInt(hm.value) * sell_price;
+     document.getElementById('productQuantity').value = parseInt(hm.value);
     }
   }
   
@@ -45,6 +48,7 @@
      hm.value = 0;
     }
    sum.value = parseInt(hm.value) * sell_price;
+   document.getElementById('productQuantity').value = parseInt(hm.value);
   } 
   //-->
   </script>
@@ -136,10 +140,11 @@
                   
                     <div class="d-flex justify-content-between align-items-center">
                       <div class="col-6 d-grid p-1">
-                        <button type="button" class="btn btn-lg btn-dark">Add to Basket</button>
-                      </div>
-                      <div class="col-6 d-grid p-1">
-                        <button type="button" class="btn btn-lg btn-secondary">Buy now</button>
+                        <form action="/addToCart" method="post">
+                          <input type="hidden" name="productToAddToCart" value="<%=id%>">
+                          <input type="hidden" id="productQuantity" name="productQuantity" value="1">
+                          <button type="submit" class="btn btn-outline-danger ms-1">Add to cart</button>
+                        </form>
                       </div>
                     
                     </div>

@@ -34,6 +34,15 @@ CREATE TABLE review(
     FOREIGN KEY (productId) REFERENCES product(id)
 );
 
+CREATE TABLE cart(
+    id INTEGER PRIMARY KEY,
+    userId INTEGER NOT NULL,
+    productId INTEGER NOT NULL,
+    quantity INTEGER NOT NULL,
+    FOREIGN KEY (userId) REFERENCES users(id),
+    FOREIGN KEY (productId) REFERENCES products(id)
+);
+
 INSERT INTO users(name, email, password, role) VALUES ('Eduard', 'e@e.com', '$2b$10$6uZtu4CVNG378HXpkfwsjumXVWzenACbfYG7QVFdDmC4MklUxOwlu', 'Admin');
 INSERT INTO users(name, email, password) VALUES ('John', 'j@j.com', '$2b$10$po3DZmFAntAhYYCSqZQ7UuC8EItx762MeKRVLIQe.ga0GpgzlLgi.');
 INSERT INTO users(name, email, password) VALUES ('Sarah', 's@s.com', '$2b$10$che2OeUAg9ZnFHcC/uxrBuXbB0CTwF/6g8qiIQN9KQmCym5MqzGsK');
@@ -50,3 +59,7 @@ INSERT INTO token(userID) VALUES (2);
 INSERT INTO token(userID) VALUES (3);
 INSERT INTO review(userId, productId, review) VALUES ('2', '1', 'Best gaming computer ever');
 INSERT INTO review(userId, productId, review) VALUES ('3', '1', 'This nicely complements my gaming socks!');
+INSERT INTO cart(userId, productId, quantity) VALUES ('1', '3', '4');
+INSERT INTO cart(userId, productId, quantity) VALUES ('1', '5', '3');
+INSERT INTO cart(userId, productId, quantity) VALUES ('1', '1', '3');
+INSERT INTO cart(userId, productId, quantity) VALUES ('1', '2', '7');

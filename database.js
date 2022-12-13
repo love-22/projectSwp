@@ -15,10 +15,12 @@ const findReview = "SELECT name, review FROM users JOIN review ON users.id = rev
 const findIfReviewExist = "SELECT productId FROM review WHERE userId = $1;";
 const insertReview = "INSERT INTO review(userId, productId, review) VALUES ($1, $2, $3)";
 const updateReview = "UPDATE review set review = $1 WHERE userId = $2 AND productId = $3;";
+const findCart = "SELECT productName, quantity, productPrice, productId, productImg FROM cart JOIN product ON cart.productId = product.id WHERE userId = $1;";
+const deleteProduct = "DELETE FROM cart WHERE productId = $1 AND userId = $2;";
+const findIfProductInCart = "SELECT quantity FROM cart WHERE productId = $1 AND userId = $2;";
+const insertProductToCart = "INSERT INTO cart(userId, productId, quantity) VALUES ($1, $2, $3);";
+const updateProductInCart = "UPDATE cart set quantity = $1 WHERE productId = $2 AND userId = $3;";
 
-// userId INTEGER NOT NULL,
-//     productId INTEGER NOT NULL,
-//     review TEXT NOT NULL,
 const db = new sqlite3.Database('./test.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
     if (err) return console.error(err.message);
 });
@@ -39,5 +41,10 @@ module.exports = {
     findReview,
     insertReview,
     updateReview,
+    findCart,
+    deleteProduct,
+    findIfProductInCart,
+    insertProductToCart,
+    updateProductInCart,
     db
 };

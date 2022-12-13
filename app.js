@@ -9,14 +9,16 @@ const { passport, checkAuthenticated } = require('./passport-config');
 const { getLogin, postLogin, getLogin2FA, postLogin2FA } = require('./routes/login');
 const { getRegister, postRegister } = require('./routes/register');
 const { getAdminDashboard } = require('./routes/adminDashboard');
-const { getProductDetails } = require('./routes/productDetails');
-const { getWriteReview, postWriteReview } = require('./routes/writeReview')
+const { getProductDetails, addToCart } = require('./routes/productDetails');
+const { getWriteReview, postWriteReview } = require('./routes/writeReview');
+const { getCart, removeProduct } = require('./routes/cart');
 const { db } = require('./database');
 const express = require('express');
 const app = express();
 const session = require('express-session');
 const bcrypt = require('bcrypt');
 const flash = require('express-flash');
+
 
 app.set('view-engine', 'ejs');
 app.use(flash());
@@ -91,11 +93,17 @@ app.get('/productDetails/:id', getProductDetails);
 
 app.get('/writeReview/:id', getWriteReview);
 
+app.get('/cart', getCart);
+
+app.post('/addToCart', addToCart);
+
+app.post('/removeProduct', removeProduct);
+
 app.post('/writeReview/:id', postWriteReview);
 
-app.get('/orderDetails', (req, res) => {
-  res.render('orderDetails.ejs');
-});
+///////////////////////////////////////////////////////////////
+// 
+///////////////////////////////////////////////////////////////
 
 app.get('/productUpload', (req, res) => {
   res.render('productUpload.ejs');
