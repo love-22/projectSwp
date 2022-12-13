@@ -40,6 +40,7 @@ app.use(express.urlencoded({ extended: false })); //this is to accept data in ur
 
 const multer = require("multer");
 const path = require("path");
+const { getProductEdit, postProductEdit } = require('./routes/productEdit');
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, './public/img')
@@ -99,6 +100,14 @@ app.post('/userDashboardEdit', postUserDashboardEdit);
 
 app.get('/adminDashboard', getAdminDashboard);
 
+app.get('/productUpload', getProductUpload);
+
+app.get('/productEdit', getProductEdit);
+
+app.post('/removeProductFromWebsite', postProductEdit);
+
+app.post('/productUpload', upload.single('picture'), postProductUpload);
+
 ///////////////////////////////////////////////////////////////
 // Product Details
 ///////////////////////////////////////////////////////////////
@@ -114,14 +123,6 @@ app.post('/addToCart', addToCart);
 app.post('/removeProduct', removeProduct);
 
 app.post('/writeReview/:id', postWriteReview);
-
-///////////////////////////////////////////////////////////////
-// Product Upload
-///////////////////////////////////////////////////////////////
-
-app.get('/productUpload', getProductUpload);
-
-app.post('/productUpload', upload.single('picture'), postProductUpload);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

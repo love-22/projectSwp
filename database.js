@@ -21,6 +21,8 @@ const findIfProductInCart = "SELECT quantity FROM cart WHERE productId = $1 AND 
 const insertProductToCart = "INSERT INTO cart(userId, productId, quantity) VALUES ($1, $2, $3);";
 const updateProductInCart = "UPDATE cart set quantity = $1 WHERE productId = $2 AND userId = $3;";
 const insertProduct = "INSERT INTO product(productName, productPrice, productDesc, productImg) VALUES ($1, $2, $3, $4);";
+const findProducts = "SELECT id, productName, productPrice, productDesc, productImg from product;";
+const deleteProductFully = "DELETE FROM product WHERE id = $1;";
 
 const db = new sqlite3.Database('./test.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
     if (err) return console.error(err.message);
@@ -48,5 +50,7 @@ module.exports = {
     insertProductToCart,
     updateProductInCart,
     insertProduct,
+    findProducts,
+    deleteProductFully,
     db
 };
