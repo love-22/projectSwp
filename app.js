@@ -10,6 +10,7 @@ const { getLogin, postLogin, getLogin2FA, postLogin2FA } = require('./routes/log
 const { getRegister, postRegister } = require('./routes/register');
 const { getAdminDashboard } = require('./routes/adminDashboard');
 const { getProductDetails } = require('./routes/productDetails');
+const { getWriteReview, postWriteReview } = require('./routes/writeReview')
 const { db } = require('./database');
 const express = require('express');
 const app = express();
@@ -88,6 +89,10 @@ app.get('/adminDashboard', getAdminDashboard);
 
 app.get('/productDetails/:id', getProductDetails);
 
+app.get('/writeReview/:id', getWriteReview);
+
+app.post('/writeReview/:id', postWriteReview);
+
 app.get('/orderDetails', (req, res) => {
   res.render('orderDetails.ejs');
 });
@@ -113,9 +118,7 @@ app.get('/test', (req, res) => {
   res.render('test.ejs');
 });
 
-app.get('/writeReview', (req, res) => {
-  res.render('writeReview.ejs');
-});
+
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

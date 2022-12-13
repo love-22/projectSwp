@@ -72,7 +72,7 @@ async function sendMail(email, req) {
     let info = await transporter.sendMail({
     from: 'test@swp.com', // Sender
     to: email, // Receivers
-    subject: "[Test] SWP Login Token", // Mail Subject
+    subject: "SWP Login Token", // Mail Subject
 
     //Random 6 digit code email format
     text: "Your Login code is: " + token, // plain text body
@@ -88,10 +88,7 @@ const getLogin2FA = (req, res) => {
 };
 
 const postLogin2FA = (req, res, next) => {
-    //const email = req.body.email
     const token = req.body.token
-    //if (tokens[email] == token) {
-    // FINDING USER TOKEN SHOULD BE COMPLETED HERE... ALREADY DONE.
     const query = db.prepare(findUserToken);
     query.get(req.user.id, function (err, row) {
       console.log(row.token);
