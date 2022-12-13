@@ -9,13 +9,17 @@ const { passport, checkAuthenticated } = require('./passport-config');
 const { getLogin, postLogin, getLogin2FA, postLogin2FA } = require('./routes/login');
 const { getRegister, postRegister } = require('./routes/register');
 const { getAdminDashboard } = require('./routes/adminDashboard');
-const { getProductDetails } = require('./routes/productDetails');
+const { getProductDetails, addToCart } = require('./routes/productDetails');
+const { getWriteReview, postWriteReview } = require('./routes/writeReview');
+const { getCart, removeProduct, payCart } = require('./routes/cart');
 const { db } = require('./database');
 const express = require('express');
 const app = express();
 const session = require('express-session');
 const bcrypt = require('bcrypt');
 const flash = require('express-flash');
+const { getProductUpload, postProductUpload } = require('./routes/productUpload');
+
 
 app.set('view-engine', 'ejs');
 app.use(flash());
@@ -32,9 +36,22 @@ app.use(passport.session());
 let sql;
 const products = [];
 
-const findProductById = "SELECT productName, productPrice, productDesc, productImg, ProductCreationDate FROM product WHERE id = $1";
-
 app.use(express.urlencoded({ extended: false })); //this is to accept data in urlencoded format
+
+const multer = require("multer");
+const path = require("path");
+const { getProductEdit, postProductEdit } = require('./routes/productEdit');
+const { getOrderedItems } = require('./routes/orders');
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './public/img')
+    },
+    filename: (req, file, cb) => {
+        console.log(file);
+        cb(null, Date.now() + path.extname(file.originalname))
+    }
+});
+const upload = multer({storage:storage});
 
 ///////////////////////////////////////////////////////////////
 // Index
@@ -43,6 +60,8 @@ app.use(express.urlencoded({ extended: false })); //this is to accept data in ur
 app.get('/', getMain);
 
 app.post('/main', postLogout);
+
+app.post('/goToProduct', goToProductOnClick);
 
 ///////////////////////////////////////////////////////////////
 // Login
@@ -70,9 +89,13 @@ app.post('/join', postRegister);
 
 app.get('/userDashboard', getUserDashboard);
 
+app.post('/deleteAccount', userDeletesAccount);
+
 app.get('/userDashboardEdit', getUserDashboardEdit);
 
 app.post('/userDashboardEdit', postUserDashboardEdit);
+
+app.get('/getOrders', getOrderedItems);
 
 ///////////////////////////////////////////////////////////////
 // Admin Dashboard
@@ -80,44 +103,31 @@ app.post('/userDashboardEdit', postUserDashboardEdit);
 
 app.get('/adminDashboard', getAdminDashboard);
 
+app.get('/productUpload', getProductUpload);
+
+app.get('/productEdit', getProductEdit);
+
+app.post('/removeProductFromWebsite', postProductEdit);
+
+app.post('/productUpload', upload.single('picture'), postProductUpload);
+
 ///////////////////////////////////////////////////////////////
 // Product Details
 ///////////////////////////////////////////////////////////////
 
 app.get('/productDetails/:id', getProductDetails);
 
-app.get('/orderDetails', (req, res) => {
-  res.render('orderDetails.ejs');
-});
+app.get('/writeReview/:id', getWriteReview);
 
-app.get('/productUpload', (req, res) => {
-  res.render('productUpload.ejs');
-});
+app.get('/cart', getCart);
 
-app.post('/productUpload', async (req, res) => {
-  try {
-    sql = `INSERT INTO products(productName, price, description, uploadImage) VALUES (?, ?, ?, ?)`;
-    db.run(sql, [req.body.productName, req.body.price, req.body.description, req.body.uploadImage], (err) => {
-      if (err) return console.error(err.message);
-    })
-    res.redirect('/productDetails');
-  } catch {
-    res.redirect('/productUpload');
-  }
-  console.log(products, "Update Products... :D");
-});
+app.post('/addToCart', addToCart);
 
-app.get('/test', (req, res) => {
-  res.render('test.ejs');
-});
+app.post('/removeProduct', removeProduct);
 
-app.get('/writeReview', (req, res) => {
-  res.render('writeReview.ejs');
-});
+app.post('/writeReview/:id', postWriteReview);
 
-app.post('/deleteAccount', userDeletesAccount);
-
-app.post('/goToProduct', goToProductOnClick);
+app.post('/payCart', payCart);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

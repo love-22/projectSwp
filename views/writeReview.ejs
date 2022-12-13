@@ -41,17 +41,19 @@
 
         <!-- Body -->
         <div class="card-body mt-5">
-          <h5 class="card-title mb-5 d-flex justify-content-center">Create Review</h5>
+          <h5 class="card-title mb-5 d-flex justify-content-center">Create Review for <%=product%></h5>
           
     
-          <form action="/writeReview" method="post">
+          <form action="/writeReview/<%=product%>" method="post">
             <div class="row mb-3 d-flex justify-content-center">
               <!--Product Description-->
              <label for="description" class="col-sm-2 col-form-label">Add a written review</label>
                   <div class="col-sm-3">
-                  <textarea class="form-control" id="description" rows="3"></textarea>
+                  <textarea class="form-control" id="description" name="userReview" rows="3"></textarea>
                 </div>
             </div>
+          
+
 
             <div class="col-12">
             
@@ -60,7 +62,7 @@
                 <button type="submit" class="btn btn-success btn-sm margin-left-2">Submit</button>
                 
               </div>
-
+            </form>
     
                     </div>
                   </div>
