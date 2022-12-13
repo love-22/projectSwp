@@ -14,7 +14,7 @@ const getCart = (req, res) => {
           while(x!=rows.length) {
             tempPrice = rows[x].productPrice/100 * rows[x].quantity;
             priceToPay += tempPrice;
-            productId.push(rows[x].productId);
+            productId.push(rows[x].id);
             productName.push(rows[x].productName);
             quantity.push(rows[x].quantity);
             productPrice.push("€" + tempPrice);
