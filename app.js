@@ -11,7 +11,7 @@ const { getRegister, postRegister } = require('./routes/register');
 const { getAdminDashboard } = require('./routes/adminDashboard');
 const { getProductDetails, addToCart } = require('./routes/productDetails');
 const { getWriteReview, postWriteReview } = require('./routes/writeReview');
-const { getCart, removeProduct } = require('./routes/cart');
+const { getCart, removeProduct, payCart } = require('./routes/cart');
 const { db } = require('./database');
 const express = require('express');
 const app = express();
@@ -41,6 +41,7 @@ app.use(express.urlencoded({ extended: false })); //this is to accept data in ur
 const multer = require("multer");
 const path = require("path");
 const { getProductEdit, postProductEdit } = require('./routes/productEdit');
+const { getOrderedItems } = require('./routes/orders');
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, './public/img')
@@ -94,6 +95,8 @@ app.get('/userDashboardEdit', getUserDashboardEdit);
 
 app.post('/userDashboardEdit', postUserDashboardEdit);
 
+app.get('/getOrders', getOrderedItems);
+
 ///////////////////////////////////////////////////////////////
 // Admin Dashboard
 ///////////////////////////////////////////////////////////////
@@ -123,6 +126,8 @@ app.post('/addToCart', addToCart);
 app.post('/removeProduct', removeProduct);
 
 app.post('/writeReview/:id', postWriteReview);
+
+app.post('/payCart', payCart);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

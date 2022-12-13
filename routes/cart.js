@@ -1,4 +1,4 @@
-const {db, findCart, deleteProduct} = require('../database');
+const {db, findCart, deleteProduct, insertIntoOrder} = require('../database');
 
 const getCart = (req, res) => {
     const query = db.prepare(findCart);
@@ -50,7 +50,26 @@ const removeProduct = (req, res) => {
       });
 };
 
+const payCart = (req, res) => {
+    const query = db.prepare(findCart);
+    query.all(req.user.id, function (err, rows) {
+          let x = 0;
+          while(x!=rows.length) {
+            db.run(insertIntoOrder, [rows[x].productName, rows[x].productPrice, rows[x].productDesc, rows[x].productImg, req.user.id, rows[x].quantity], (err) => {
+              if (err) return console.error(err.message);
+            });
+            db.run(deleteProduct, [rows[x].id, req.user.id], (err) => {
+              if (err) return console.error(err.message);
+            });
+            
+            x++;
+          };
+          res.redirect('/');
+        })
+};
+
 module.exports = {
     getCart,
-    removeProduct
+    removeProduct,
+    payCart
 };

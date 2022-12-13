@@ -43,6 +43,17 @@ CREATE TABLE cart(
     FOREIGN KEY (productId) REFERENCES products(id)
 );
 
+CREATE TABLE orders(
+    id INTEGER PRIMARY KEY,
+    productName TEXT NOT NULL,
+    productPrice INTEGER NOT NULL,
+    productDesc TEXT NOT NULL,
+    productImg TEXT UNIQUE,
+    userId INTEGER NOT NULL,
+    quantity INTEGER NOT NULL,
+    FOREIGN KEY (userId) REFERENCES users(id)
+);
+
 INSERT INTO users(name, email, password, role) VALUES ('Eduard', 'e@e.com', '$2b$10$6uZtu4CVNG378HXpkfwsjumXVWzenACbfYG7QVFdDmC4MklUxOwlu', 'Admin');
 INSERT INTO users(name, email, password) VALUES ('John', 'j@j.com', '$2b$10$po3DZmFAntAhYYCSqZQ7UuC8EItx762MeKRVLIQe.ga0GpgzlLgi.');
 INSERT INTO users(name, email, password) VALUES ('Sarah', 's@s.com', '$2b$10$che2OeUAg9ZnFHcC/uxrBuXbB0CTwF/6g8qiIQN9KQmCym5MqzGsK');

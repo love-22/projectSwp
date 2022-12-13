@@ -1,9 +1,0 @@
--- CREATE TABLE search(
---     id INTEGER PRIMARY KEY,
---     search TEXT NOT NULL
--- );
-
--- CREATE TABLE category(
---     id INTEGER PRIMARY KEY,
---     categoryName TEXT NOT NULL
--- ); */
