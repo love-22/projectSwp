@@ -47,7 +47,6 @@ const addToCart = (req, res) => {
       });
     }
   });
-  // If in cart, add to the item.
 };
 
 module.exports = {

@@ -18,6 +18,7 @@ const app = express();
 const session = require('express-session');
 const bcrypt = require('bcrypt');
 const flash = require('express-flash');
+const { getProductUpload, postProductUpload } = require('./routes/productUpload');
 
 
 app.set('view-engine', 'ejs');
@@ -36,6 +37,19 @@ let sql;
 const products = [];
 
 app.use(express.urlencoded({ extended: false })); //this is to accept data in urlencoded format
+
+const multer = require("multer");
+const path = require("path");
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './public/img')
+    },
+    filename: (req, file, cb) => {
+        console.log(file);
+        cb(null, Date.now() + path.extname(file.originalname))
+    }
+});
+const upload = multer({storage:storage});
 
 ///////////////////////////////////////////////////////////////
 // Index
@@ -102,31 +116,12 @@ app.post('/removeProduct', removeProduct);
 app.post('/writeReview/:id', postWriteReview);
 
 ///////////////////////////////////////////////////////////////
-// 
+// Product Upload
 ///////////////////////////////////////////////////////////////
 
-app.get('/productUpload', (req, res) => {
-  res.render('productUpload.ejs');
-});
+app.get('/productUpload', getProductUpload);
 
-app.post('/productUpload', async (req, res) => {
-  try {
-    sql = `INSERT INTO products(productName, price, description, uploadImage) VALUES (?, ?, ?, ?)`;
-    db.run(sql, [req.body.productName, req.body.price, req.body.description, req.body.uploadImage], (err) => {
-      if (err) return console.error(err.message);
-    })
-    res.redirect('/productDetails');
-  } catch {
-    res.redirect('/productUpload');
-  }
-  console.log(products, "Update Products... :D");
-});
-
-app.get('/test', (req, res) => {
-  res.render('test.ejs');
-});
-
-
+app.post('/productUpload', upload.single('picture'), postProductUpload);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
