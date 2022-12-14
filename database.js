@@ -12,7 +12,7 @@ const insertTwoFA = "INSERT INTO token(userId) VALUES ($1);";
 const findUserToken = "SELECT users.id, token.id, token FROM users JOIN token on users.id = token.id WHERE users.id = $1;";
 const updateTwoFA = "UPDATE token SET token = $1 WHERE userId = $2";
 const findReview = "SELECT name, review FROM users JOIN review ON users.id = review.userid WHERE productId = $1;";
-const findIfReviewExist = "SELECT productId FROM review WHERE userId = $1;";
+const findIfReviewExist = "SELECT productId FROM review WHERE userId = $1 AND productId = $2;";
 const insertReview = "INSERT INTO review(userId, productId, review) VALUES ($1, $2, $3)";
 const updateReview = "UPDATE review set review = $1 WHERE userId = $2 AND productId = $3;";
 const findCart = "SELECT productName, quantity, productPrice, product.id, productDesc, productImg FROM cart JOIN product ON cart.productId = product.id WHERE userId = $1;";
