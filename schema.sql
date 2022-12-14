@@ -6,6 +6,8 @@ CREATE TABLE users(
     phone TEXT DEFAULT '0830000000',
     address TEXT DEFAULT 'IFSC NCI',
     role TEXT DEFAULT 'Customer',
+    attempt TEXT DEFAULT '0',
+    locked TEXT DEFAULT 'No',
     creationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
@@ -22,6 +24,8 @@ CREATE TABLE token(
     id INTEGER PRIMARY KEY,
     token TEXT DEFAULT '0000000',
     userId INTEGER NOT NULL,
+    attempt TEXT DEFAULT '0',
+    locked TEXT DEFAULT 'No',
     FOREIGN KEY(userId) REFERENCES users(id)
 );
 

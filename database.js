@@ -25,7 +25,7 @@ const findProducts = "SELECT id, productName, productPrice, productDesc, product
 const deleteProductFully = "DELETE FROM product WHERE id = $1;";
 const insertIntoOrder = "INSERT INTO orders(productName, productPrice, productDesc, productImg, userId, quantity) VALUES ($1, $2, $3, $4, $5, $6);";
 const findOrderedItems = "SELECT productName, productPrice, productDesc, productImg, userId, quantity FROM orders WHERE userId = $1;";
-
+const findUserToLogAttempt = "SELECT attempt, "
 
 const db = new sqlite3.Database('./test.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
     if (err) return console.error(err.message);

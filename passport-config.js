@@ -1,6 +1,6 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const {db} = require('./database');
+const {db, findAllbyID} = require('./database');
 const {userLogIn, findUserbyID} = require('./database');
 const bcrypt = require('bcrypt');
 
@@ -40,9 +40,24 @@ const checkAuthenticated = (req, res, next) => {
       return res.redirect('/');
     }
     next();
-  }
+};
+
+
+const checkIfAdmin = (req, res, next) => {  
+  const query = db.prepare(findAllbyID);
+  query.get(req.user.id, function (err, row) {
+    console.log();
+    if (row.role == 'Admin') {
+      console.log("IsAdmin");
+      next();
+    } else {
+      return res.redirect('/userDashboard');
+    }
+  });
+};
 
 module.exports = {
     passport,
-    checkAuthenticated
+    checkAuthenticated,
+    checkIfAdmin
 };

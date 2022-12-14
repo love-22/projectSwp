@@ -5,7 +5,7 @@ if (process.env.NODE_ENV !== 'production') {
 const { getMain, postLogout, goToProductOnClick } = require('./routes/index');
 const { getUserDashboard, userDeletesAccount } = require('./routes/userDashboard');
 const { getUserDashboardEdit, postUserDashboardEdit } = require('./routes/userDashboardEdit');
-const { passport, checkAuthenticated } = require('./passport-config');
+const { passport, checkAuthenticated, checkIfAdmin } = require('./passport-config');
 const { getLogin, postLogin, getLogin2FA, postLogin2FA } = require('./routes/login');
 const { getRegister, postRegister } = require('./routes/register');
 const { getAdminDashboard } = require('./routes/adminDashboard');
@@ -19,9 +19,12 @@ const session = require('express-session');
 const bcrypt = require('bcrypt');
 const flash = require('express-flash');
 const { getProductUpload, postProductUpload } = require('./routes/productUpload');
-
-
 app.set('view-engine', 'ejs');
+const bodyParser = require('body-parser');
+const {check, validationResult} = require('express-validator');
+
+const urlencodedParser = bodyParser.urlencoded({extended:false});
+
 app.use(flash());
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -69,11 +72,23 @@ app.post('/goToProduct', goToProductOnClick);
 
 app.get('/login1', checkAuthenticated, getLogin);
 
-app.post('/login1', checkAuthenticated, postLogin);
+app.post('/login1', checkAuthenticated, urlencodedParser, [
+  check('password', "PASSWORD must be at least 8 characters long.")
+    .exists()
+    .isLength({ min:8, max:256}),
+  check('email', "EMAIL is not valid")
+    .isEmail()
+    .normalizeEmail()
+], postLogin);
 
 app.get('/login2', getLogin2FA);
 
-app.post('/login2', postLogin2FA);
+app.post('/login2', urlencodedParser, [
+  check('token', "Token must be a six digit number")
+    .exists()
+    .isLength({min:6, max:6})
+    .isNumeric()
+], postLogin2FA);
 
 ///////////////////////////////////////////////////////////////
 // Registration
@@ -101,7 +116,7 @@ app.get('/getOrders', getOrderedItems);
 // Admin Dashboard
 ///////////////////////////////////////////////////////////////
 
-app.get('/adminDashboard', getAdminDashboard);
+app.get('/adminDashboard', checkIfAdmin, getAdminDashboard);
 
 app.get('/productUpload', getProductUpload);
 
@@ -133,3 +148,7 @@ const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+// module.exports = {
+//   validationResult
+// };

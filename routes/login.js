@@ -2,47 +2,63 @@ const nodemailer = require("nodemailer");
 const {passport} = require('../passport-config');
 const tokens = {};
 const {db, findUserToken, updateTwoFA} = require('../database');
+const { validationResult } = require("express-validator");
 
 const getLogin = (req, res) => {
-    res.render('login1.ejs');
+    res.render('login1.ejs', {length:0, alert:''});
 };
 
 const postLogin = (req, res, next) => {
-    const email = req.body.email;
-    passport.authenticate('local', function (err, user, info, attempt) {
-      if (err) {
-        console.log(err);
-        return next(err);
-      }
-      if (!user) {
-        console.log(info);
-        console.log("Access Denied");
-        return res.redirect('/login1');
-      }
-  
-      //if users password is wrong 3 times then lock the account for 5 minutes 
-      //does not yet work
-      if (attempt >= 3) {
-        console.log("Too many attempts");
-        userLogIn = 1;
-        setTimeout(function () {
-          userLogIn = 0;
-        }, 300000);
-        return res.redirect('/login1');
-      }
-  
-      req.logIn(user, function (err) {
+    // res.json(req.body);
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) {
+      console.log(errors.array());
+      console.log(errors.array().length);
+      const alert = errors.array();
+      res.render('login1.ejs', {
+        length:alert.length,
+        alert:alert
+      })
+    } else {
+      const email = req.body.email;
+      passport.authenticate('local', function (err, user, info, attempt) {
         if (err) {
           console.log(err);
           return next(err);
         }
-  
-        sendMail(email, req).catch(console.error);
-  
-        console.log("Access Granted");
-        return res.redirect('/login2');
-      });
-    })(req, res, next);
+        if (!user) {
+          console.log(info);
+          console.log("Access Denied");
+          res.render('login1.ejs', {
+            length:0,
+            alert:"Wrong username or password."
+          })
+        }
+    
+        //if users password is wrong 3 times then lock the account for 5 minutes 
+        //does not yet work
+        // if (attempt >= 3) {
+        //   console.log("Too many attempts");
+        //   userLogIn = 1;
+        //   setTimeout(function () {
+        //     userLogIn = 0;
+        //   }, 300000);
+        //   return res.redirect('/login1');
+        // }
+    
+        req.logIn(user, function (err) {
+          if (err) {
+            console.log(err);
+            return next(err);
+          }
+    
+          sendMail(email, req).catch(console.error);
+    
+          console.log("Access Granted");
+          return res.redirect('/login2');
+        });
+      })(req, res, next);
+    } 
 };
 
 async function sendMail(email, req) {
@@ -84,24 +100,37 @@ async function sendMail(email, req) {
 }
 
 const getLogin2FA = (req, res) => {
-    res.render('login2.ejs');
+    res.render('login2.ejs', {length:0, alert:''});
 };
 
 const postLogin2FA = (req, res, next) => {
-    const token = req.body.token
-    const query = db.prepare(findUserToken);
-    query.get(req.user.id, function (err, row) {
-      console.log(row.token);
-      if (row.token == token) {
-        console.log("Access Granted");
-        return res.redirect('/');
-      }
-      else {
-        console.log("Access Denied");
-        return res.redirect('/login2');
-      }
-    });
-
+  const errors = validationResult(req);
+    if(!errors.isEmpty()) {
+      console.log(errors.array());
+      console.log(errors.array().length);
+      const alert = errors.array();
+      res.render('login2.ejs', {
+        length:alert.length,
+        alert:alert
+      })
+    } else {
+      const token = req.body.token
+      const query = db.prepare(findUserToken);
+      query.get(req.user.id, function (err, row) {
+        console.log(row.token);
+        if (row.token == token) {
+          console.log("Access Granted");
+          return res.redirect('/');
+        }
+        else {
+          console.log("Access Denied");
+          res.render('login2.ejs', {
+            length:0,
+            alert:"Token incorrect."
+          })
+        }
+      });
+    }
 }
 
 module.exports = {
