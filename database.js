@@ -25,7 +25,13 @@ const findProducts = "SELECT id, productName, productPrice, productDesc, product
 const deleteProductFully = "DELETE FROM product WHERE id = $1;";
 const insertIntoOrder = "INSERT INTO orders(productName, productPrice, productDesc, productImg, userId, quantity) VALUES ($1, $2, $3, $4, $5, $6);";
 const findOrderedItems = "SELECT productName, productPrice, productDesc, productImg, userId, quantity FROM orders WHERE userId = $1;";
-const findUserToLogAttempt = "SELECT attempt, "
+const findUserToLogAttempt = "SELECT attempt, locked FROM users WHERE email = $1;";
+const updateUserAttempt = "UPDATE users SET attempt = $1 WHERE email = $2;";
+const updateUserlocked = "UPDATE users SET locked = $1 WHERE email = $2";
+const findUserToLogAttempt2FA = "SELECT attempt, locked FROM token WHERE userId = $1;";
+const updateUserAttempt2FA = "UPDATE token SET attempt = $1 WHERE userId = $2;";
+const updateUserlocked2FA = "UPDATE token SET locked = $1 WHERE userId = $2";
+
 
 const db = new sqlite3.Database('./test.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
     if (err) return console.error(err.message);
@@ -57,5 +63,11 @@ module.exports = {
     deleteProductFully,
     insertIntoOrder,
     findOrderedItems,
+    findUserToLogAttempt,
+    updateUserAttempt,
+    updateUserlocked,
+    findUserToLogAttempt2FA,
+    updateUserAttempt2FA,
+    updateUserlocked2FA,
     db
 };

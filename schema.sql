@@ -7,7 +7,7 @@ CREATE TABLE users(
     address TEXT DEFAULT 'IFSC NCI',
     role TEXT DEFAULT 'Customer',
     attempt TEXT DEFAULT '0',
-    locked TEXT DEFAULT 'No',
+    locked TEXT DEFAULT '0',
     creationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
@@ -25,7 +25,7 @@ CREATE TABLE token(
     token TEXT DEFAULT '0000000',
     userId INTEGER NOT NULL,
     attempt TEXT DEFAULT '0',
-    locked TEXT DEFAULT 'No',
+    locked TEXT DEFAULT '0',
     FOREIGN KEY(userId) REFERENCES users(id)
 );
 
