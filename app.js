@@ -97,7 +97,7 @@ app.post('/login2', checkAuthenticated2FA, urlencodedParser, [
 app.get('/join', getRegister);
 
 app.post('/join', urlencodedParser, [
-  check('name', "Username must be at least")
+  check('name', "Name must be at least")
     .exists()
     .isLength({min:3, max:128}),
   check('email', "EMAIL is not valid")
@@ -121,7 +121,28 @@ app.post('/deleteAccount', checkIfFullyLoggedIn, userDeletesAccount);
 
 app.get('/userDashboardEdit', checkIfFullyLoggedIn, getUserDashboardEdit);
 
-app.post('/userDashboardEdit', checkIfFullyLoggedIn, postUserDashboardEdit);
+app.post('/userDashboardEdit', checkIfFullyLoggedIn, urlencodedParser, [
+  check('name', "Name must be at least")
+    .exists()
+    .isLength({min:3, max:128}),
+  check('email', "EMAIL is not valid")
+      .isEmail()
+      .normalizeEmail(),
+  check('phone', "Phone must be between 2 and 20 digits.")
+    .exists()
+    .isLength({min:2, max:20})
+    .isNumeric(),
+  check('address', "Name must not exceed 500 characters.")
+    .exists()
+    .isLength({min:3, max:500}),
+  check('password', "PASSWORD must be at least 8 characters long.")
+    .exists()
+    .isLength({ min:8, max:256}),
+  check('repassword', "NEW PASSWORD must be at least 8 characters long.")
+    .isLength({ min:0, max:256}),
+  check('repassword2', "NEW RE-PASSWORD must be at least 8 characters long.")
+    .isLength({ min:0, max:256})
+],postUserDashboardEdit);
 
 app.get('/getOrders', checkIfFullyLoggedIn, getOrderedItems);
 
@@ -157,7 +178,7 @@ app.post('/writeReview/:id', checkIfFullyLoggedIn, urlencodedParser, [
   check('userReview', "Review cannot be empty or exceed 5000 characters.")
     .exists()
     .isLength({min:2, max:5000})
-],postWriteReview);
+], postWriteReview);
 
 app.post('/payCart', checkIfFullyLoggedIn, payCart);
 
