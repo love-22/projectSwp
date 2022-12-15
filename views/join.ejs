@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -43,7 +42,9 @@
         <!-- Body -->
         <div class="card-body mt-5">
           <h5 class="card-title mb-5 d-flex justify-content-center">Create Account</h5>
-          
+          <% for(var i = 0; i < length; i++) {%>
+            <h2><%=alert[i]%></h2>
+          <% } %>
           <!--Join Form-->
           <form action="/join" method="post">
             <div class="row mb-3 d-flex justify-content-center">
@@ -96,7 +97,7 @@
     </body>
 
 
-    <script>
+    <!-- <script>
       
       //password validation
      const password = document.getElementById("password")
@@ -144,7 +145,7 @@
        password.onchange = validatePassword;
        password2.onchange = validatePassword;
       
-      </script>
+      </script> -->
 
      <!--reCAPTCHAv2 Check Box-->
       <script src="https://www.google.com/recaptcha/api.js" async defer></script>

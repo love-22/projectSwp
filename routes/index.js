@@ -33,6 +33,7 @@ const getMain = (req, res) => {
 
 const postLogout = (req, res) => {
     const logout = req.body.logout;
+    const userId = req.user.id;
     //logout session
     if (logout == logout) {
       req.session.destroy(function (err) {
@@ -40,7 +41,7 @@ const postLogout = (req, res) => {
           console.log(err);
           console.log("Error in logout");
         } else {
-          db.run(updateLockStatus, ['Locked', req.user.id], (err) => {
+          db.run(updateLockStatus, ['Locked', userId], (err) => {
             if (err) return console.error(err.message);
           });
           res.redirect('/');
