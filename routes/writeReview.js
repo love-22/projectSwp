@@ -8,7 +8,7 @@ const postWriteReview = (req, res) => {
     // Check if user already wrote a review
     console.log(req.body.userReview)
     const query = db.prepare(findIfReviewExist);
-    query.get(req.user.id, function (err, row) {
+    query.get(req.user.id, req.params.id, function (err, row) {
       if (!row){
         // User never submitted a review
         // and wants to.

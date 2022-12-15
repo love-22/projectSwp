@@ -1,48 +1,62 @@
 const nodemailer = require("nodemailer");
 const {passport} = require('../passport-config');
 const tokens = {};
-const {db, findUserToken, updateTwoFA} = require('../database');
+const {db, findUserToken, updateTwoFA, findUserToLogAttempt2FA, updateUserAttempt2FA, updateUserlocked2FA, updateLockStatus, updateLockStatusByEmail} = require('../database');
+const { validationResult } = require("express-validator");
 
 const getLogin = (req, res) => {
-    res.render('login1.ejs');
+    res.render('login1.ejs', {length:0, alert:''});
 };
 
 const postLogin = (req, res, next) => {
-    const email = req.body.email;
-    passport.authenticate('local', function (err, user, info, attempt) {
-      if (err) {
-        console.log(err);
-        return next(err);
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) {
+      console.log(errors.array());
+      console.log(errors.array().length);
+      let errMsg = [];
+      let x = 0;
+      while (x != errors.array().length){
+        errMsg.push(errors.array()[x].msg)
+        x++;
       }
-      if (!user) {
-        console.log(info);
-        console.log("Access Denied");
-        return res.redirect('/login1');
-      }
-  
-      //if users password is wrong 3 times then lock the account for 5 minutes 
-      //does not yet work
-      if (attempt >= 3) {
-        console.log("Too many attempts");
-        userLogIn = 1;
-        setTimeout(function () {
-          userLogIn = 0;
-        }, 300000);
-        return res.redirect('/login1');
-      }
-  
-      req.logIn(user, function (err) {
+      const alerte = errors.array();
+      res.render('login1.ejs', {
+        length:errMsg.length,
+        alert:errMsg
+      })
+    } else {
+      const email = req.body.email;
+      db.run(updateLockStatusByEmail, ['Locked', email], (err) => {
+        if (err) return console.error(err.message);
+      });
+      passport.authenticate('local', function (err, user, info, attempt) {
         if (err) {
           console.log(err);
           return next(err);
         }
-  
-        sendMail(email, req).catch(console.error);
-  
-        console.log("Access Granted");
-        return res.redirect('/login2');
-      });
-    })(req, res, next);
+        if (!user) {
+          console.log(info);
+          let alerts = [];
+          alerts.push(info.message);
+          res.render('login1.ejs', {
+            length:alerts.length,
+            alert:alerts
+          });
+        }
+
+        req.logIn(user, function (err) {
+          if (err) {
+            console.log(err);
+            return next(err);
+          }
+
+          sendMail(email, req).catch(console.error);
+    
+          console.log("Access Granted");
+          return res.redirect('/login2');
+        });
+      })(req, res, next);
+    } 
 };
 
 async function sendMail(email, req) {
@@ -84,24 +98,97 @@ async function sendMail(email, req) {
 }
 
 const getLogin2FA = (req, res) => {
-    res.render('login2.ejs');
+    res.render('login2.ejs', {length:0, alert:''});
 };
 
 const postLogin2FA = (req, res, next) => {
-    const token = req.body.token
-    const query = db.prepare(findUserToken);
-    query.get(req.user.id, function (err, row) {
-      console.log(row.token);
-      if (row.token == token) {
-        console.log("Access Granted");
-        return res.redirect('/');
+  const errors = validationResult(req);
+    if(!errors.isEmpty()) {
+      console.log(errors.array());
+      console.log(errors.array().length);
+      let errMsg = [];
+      let x = 0;
+      while (x != errors.array().length){
+        errMsg.push(errors.array()[x].msg)
+        x++;
       }
-      else {
-        console.log("Access Denied");
-        return res.redirect('/login2');
-      }
-    });
+      res.render('login2.ejs', {
+        length:errMsg.length,
+        alert:errMsg
+      })
+    } else {
 
+      const token = req.body.token
+      const query = db.prepare(findUserToken);
+      query.get(req.user.id, function (err, row) {
+        console.log(row.token);
+        if (row.token == token) {
+          console.log("Access Granted");
+
+          const query22 = db.prepare(findUserToLogAttempt2FA);
+          query22.get(req.user.id, async function (err, rows) {
+            if(parseInt(rows.locked) < parseInt(Date.now())) {
+              console.log("No longer locked 2FA.");
+              db.run(updateUserAttempt2FA, ['0', req.user.id], (err) => {
+                if (err) return console.error(err.message);
+              });
+              db.run(updateUserlocked2FA, ['0', req.user.id], (err) => {
+                if (err) return console.error(err.message);
+              });
+              db.run(updateLockStatus, ['Unlocked', req.user.id], (err) => {
+                if (err) return console.error(err.message);
+              });
+              return res.redirect('/');
+            } else {
+              // 2fa locked 5 mins
+              let lock = [];
+              lock.push("Token Locked for 5 minutes due to excessive attempts.");
+              res.render('login2.ejs', {
+                length:lock.length,
+                alert:lock
+              })
+            }
+          })
+
+        }
+        else {
+          console.log("Access Denied");
+          const query2 = db.prepare(findUserToLogAttempt2FA);
+          query2.get(req.user.id, function (err, row) {
+            if (parseInt(row.attempt) != 3){
+              let tempAttempt = parseInt(row.attempt);
+              tempAttempt++;
+              db.run(updateUserAttempt2FA, [tempAttempt, req.user.id], (err) => {
+                if (err) return console.error(err.message);
+              });
+
+              if (tempAttempt == 3) {
+                db.run(updateUserlocked2FA, [Date.now() + 300000, req.user.id], (err) => {
+                  if (err) return console.error(err.message);
+                });
+              }
+              let arr = [];
+              arr.push("Token Incorrect");
+              res.render('login2.ejs', {
+                length:arr.length,
+                alert:arr
+              })
+            }
+
+            if(parseInt(row.attempt) == 3) {
+              let arr = [];
+              arr.push("Token Locked for 5 minutes due to excessive attempts.");
+              res.render('login2.ejs', {
+                length:arr.length,
+                alert:arr
+              })
+            }
+          });
+
+
+        }
+      });
+    }
 }
 
 module.exports = {
@@ -110,9 +197,3 @@ module.exports = {
     getLogin2FA,
     postLogin2FA
 };
-
-// app.post('/login1', passport.authenticate('local', {
-//   successRedirect: '/login2', //if login is successful
-//   failureRedirect: '/login1', //if login is not successful
-//   failureFlash: true
-// }));

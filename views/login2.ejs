@@ -47,7 +47,9 @@
           <!--Join Form-->
           <form action="/login2" method="post">
             <div class="row mb-3 d-flex justify-content-center">
-             
+              <% for(var i = 0; i < length; i++) {%>
+                <h2><%=alert[i]%></h2>
+              <% } %>
 
               <!-- later we can remove email input form -->
          <!--    <div class="col-sm-3">

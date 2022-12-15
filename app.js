@@ -5,7 +5,7 @@ if (process.env.NODE_ENV !== 'production') {
 const { getMain, postLogout, goToProductOnClick } = require('./routes/index');
 const { getUserDashboard, userDeletesAccount } = require('./routes/userDashboard');
 const { getUserDashboardEdit, postUserDashboardEdit } = require('./routes/userDashboardEdit');
-const { passport, checkAuthenticated } = require('./passport-config');
+const { passport, checkAuthenticated, checkIfAdmin, checkIfFullyLoggedIn, checkAuthenticated2FA } = require('./passport-config');
 const { getLogin, postLogin, getLogin2FA, postLogin2FA } = require('./routes/login');
 const { getRegister, postRegister } = require('./routes/register');
 const { getAdminDashboard } = require('./routes/adminDashboard');
@@ -19,9 +19,12 @@ const session = require('express-session');
 const bcrypt = require('bcrypt');
 const flash = require('express-flash');
 const { getProductUpload, postProductUpload } = require('./routes/productUpload');
-
-
 app.set('view-engine', 'ejs');
+const bodyParser = require('body-parser');
+const {check, validationResult} = require('express-validator');
+
+const urlencodedParser = bodyParser.urlencoded({extended:false});
+
 app.use(flash());
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -59,7 +62,7 @@ const upload = multer({storage:storage});
 
 app.get('/', getMain);
 
-app.post('/main', postLogout);
+app.post('/main', checkIfFullyLoggedIn, postLogout);
 
 app.post('/goToProduct', goToProductOnClick);
 
@@ -69,11 +72,23 @@ app.post('/goToProduct', goToProductOnClick);
 
 app.get('/login1', checkAuthenticated, getLogin);
 
-app.post('/login1', checkAuthenticated, postLogin);
+app.post('/login1', checkAuthenticated, urlencodedParser, [
+  check('password', "PASSWORD must be at least 8 characters long.")
+    .exists()
+    .isLength({ min:8, max:256}),
+  check('email', "EMAIL is not valid")
+    .isEmail()
+    .normalizeEmail()
+], postLogin);
 
-app.get('/login2', getLogin2FA);
+app.get('/login2', checkAuthenticated2FA, getLogin2FA);
 
-app.post('/login2', postLogin2FA);
+app.post('/login2', checkAuthenticated2FA, urlencodedParser, [
+  check('token', "Token must be a six digit number")
+    .exists()
+    .isLength({min:6, max:6})
+    .isNumeric()
+], postLogin2FA);
 
 ///////////////////////////////////////////////////////////////
 // Registration
@@ -87,29 +102,29 @@ app.post('/join', postRegister);
 // User Dashboard
 ///////////////////////////////////////////////////////////////
 
-app.get('/userDashboard', getUserDashboard);
+app.get('/userDashboard', checkIfFullyLoggedIn, getUserDashboard);
 
-app.post('/deleteAccount', userDeletesAccount);
+app.post('/deleteAccount', checkIfFullyLoggedIn, userDeletesAccount);
 
-app.get('/userDashboardEdit', getUserDashboardEdit);
+app.get('/userDashboardEdit', checkIfFullyLoggedIn, getUserDashboardEdit);
 
-app.post('/userDashboardEdit', postUserDashboardEdit);
+app.post('/userDashboardEdit', checkIfFullyLoggedIn, postUserDashboardEdit);
 
-app.get('/getOrders', getOrderedItems);
+app.get('/getOrders', checkIfFullyLoggedIn, getOrderedItems);
 
 ///////////////////////////////////////////////////////////////
 // Admin Dashboard
 ///////////////////////////////////////////////////////////////
 
-app.get('/adminDashboard', getAdminDashboard);
+app.get('/adminDashboard', checkIfFullyLoggedIn, checkIfAdmin, getAdminDashboard);
 
-app.get('/productUpload', getProductUpload);
+app.get('/productUpload', checkIfFullyLoggedIn, checkIfAdmin, getProductUpload);
 
-app.get('/productEdit', getProductEdit);
+app.get('/productEdit', checkIfFullyLoggedIn, checkIfAdmin, getProductEdit);
 
-app.post('/removeProductFromWebsite', postProductEdit);
+app.post('/removeProductFromWebsite', checkIfFullyLoggedIn, checkIfAdmin, postProductEdit);
 
-app.post('/productUpload', upload.single('picture'), postProductUpload);
+app.post('/productUpload', checkIfFullyLoggedIn, checkIfAdmin, upload.single('picture'), postProductUpload);
 
 ///////////////////////////////////////////////////////////////
 // Product Details
@@ -117,19 +132,23 @@ app.post('/productUpload', upload.single('picture'), postProductUpload);
 
 app.get('/productDetails/:id', getProductDetails);
 
-app.get('/writeReview/:id', getWriteReview);
+app.get('/writeReview/:id', checkIfFullyLoggedIn, getWriteReview);
 
-app.get('/cart', getCart);
+app.get('/cart', checkIfFullyLoggedIn, getCart);
 
-app.post('/addToCart', addToCart);
+app.post('/addToCart', checkIfFullyLoggedIn, addToCart);
 
-app.post('/removeProduct', removeProduct);
+app.post('/removeProduct', checkIfFullyLoggedIn, removeProduct);
 
-app.post('/writeReview/:id', postWriteReview);
+app.post('/writeReview/:id', checkIfFullyLoggedIn, postWriteReview);
 
-app.post('/payCart', payCart);
+app.post('/payCart', checkIfFullyLoggedIn, payCart);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+// module.exports = {
+//   validationResult
+// };
