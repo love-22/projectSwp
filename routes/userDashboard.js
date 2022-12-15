@@ -12,31 +12,30 @@ const getUserDashboard = (req, res) => {
     });
 };
 
-const userDeletesAccount = (req, res) => {
-  try {
-    let accountID = req.user.id;
-    sql = `DELETE FROM users WHERE id = ?`;
+// const userDeletesAccount = (req, res) => {
+//   try {
+//     let accountID = req.user.id;
+//     sql = `DELETE FROM users WHERE id = ?`;
 
-    req.session.destroy(function (err) {
-      if (err) {
-        console.log(err);
-        console.log("Error in logout");
-      } else {
-        console.log("Logout successful");
-      }
-    });
+//     req.session.destroy(function (err) {
+//       if (err) {
+//         console.log(err);
+//         console.log("Error in logout");
+//       } else {
+//         console.log("Logout successful");
+//       }
+//     });
 
-    db.run(sql, [accountID], (err) => {
-      if (err) return console.error(err.message);
-    })
+//     db.run(sql, [accountID], (err) => {
+//       if (err) return console.error(err.message);
+//     })
 
-    res.redirect('/login1');
-  } catch {
-    res.redirect('/userDashboard');
-  }
-};
+//     res.redirect('/login1');
+//   } catch {
+//     res.redirect('/userDashboard');
+//   }
+// };
 
 module.exports = {
-  getUserDashboard,
-  userDeletesAccount
+  getUserDashboard
 };
