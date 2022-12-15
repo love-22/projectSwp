@@ -31,7 +31,9 @@ const updateUserlocked = "UPDATE users SET locked = $1 WHERE email = $2";
 const findUserToLogAttempt2FA = "SELECT attempt, locked FROM token WHERE userId = $1;";
 const updateUserAttempt2FA = "UPDATE token SET attempt = $1 WHERE userId = $2;";
 const updateUserlocked2FA = "UPDATE token SET locked = $1 WHERE userId = $2";
-
+const findLockStatus = "SELECT lockStatus FROM token WHERE userId = $1";
+const updateLockStatus = "UPDATE token SET lockStatus = $1 WHERE userId = $2;";
+const updateLockStatusByEmail = "UPDATE token SET lockStatus = $1 FROM (SELECT email FROM users) WHERE email = $2;";
 
 const db = new sqlite3.Database('./test.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
     if (err) return console.error(err.message);
@@ -69,5 +71,8 @@ module.exports = {
     findUserToLogAttempt2FA,
     updateUserAttempt2FA,
     updateUserlocked2FA,
+    findLockStatus,
+    updateLockStatus,
+    updateLockStatusByEmail,
     db
 };

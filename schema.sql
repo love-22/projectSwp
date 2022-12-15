@@ -26,6 +26,7 @@ CREATE TABLE token(
     userId INTEGER NOT NULL,
     attempt TEXT DEFAULT '0',
     locked TEXT DEFAULT '0',
+    lockStatus TEXT DEFAULT 'Locked',
     FOREIGN KEY(userId) REFERENCES users(id)
 );
 

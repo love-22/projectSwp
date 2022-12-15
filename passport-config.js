@@ -1,6 +1,6 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const {db, findAllbyID, findUserToLogAttempt, updateUserAttempt, userLogIn, findUserbyID, updateUserlocked} = require('./database');
+const {db, findAllbyID, findUserToLogAttempt, updateUserAttempt, userLogIn, findUserbyID, updateUserlocked, findLockStatus, updateLockStatus} = require('./database');
 const bcrypt = require('bcrypt');
 
 passport.use(new LocalStrategy({ usernameField: 'email', passwordField: 'password' },
@@ -90,14 +90,44 @@ const checkAuthenticated = (req, res, next) => {
     next();
 };
 
+const checkAuthenticated2FA = (req, res, next) => {
+  let alerts = [];
+  if (req.isAuthenticated()) {
+    next();
+  } else {
+    alerts.push("Please login to continue.");
+    res.render('login1.ejs', {
+      length:alerts.length,
+      alert:alerts
+    });
+  }
+};
+
 const checkIfFullyLoggedIn = (req, res, next) => {
+  let alerts = [];
+  
   if (!req.isAuthenticated()) {
     console.log("I am inside checkauth isAuth");
-    return res.redirect('/login1');
+    alerts.push("Please login to continue.");
+    res.render('login1.ejs', {
+      length:alerts.length,
+      alert:alerts
+    });
   } else {
-    // Search for 2FA Query.
+    const query = db.prepare(findLockStatus);
+    query.get(req.user.id, function (err, row) {
+      if (row.lockStatus == 'Locked') {
+        console.log("Locked");
+        alerts.push("Enter 2FA to continue.");
+        res.render('login2.ejs', {
+          length:alerts.length,
+          alert:alerts
+        });
+      } else {
+        next();
+      }
+  });
   }
-  next();
 };
 
 
@@ -117,5 +147,7 @@ const checkIfAdmin = (req, res, next) => {
 module.exports = {
     passport,
     checkAuthenticated,
-    checkIfAdmin
+    checkIfAdmin,
+    checkIfFullyLoggedIn,
+    checkAuthenticated2FA
 };

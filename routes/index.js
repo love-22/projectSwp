@@ -1,4 +1,4 @@
-const {db} = require('../database');
+const {db, updateLockStatus} = require('../database');
 const {findAllProducts} = require('../database');
 
 const getMain = (req, res) => {
@@ -40,6 +40,9 @@ const postLogout = (req, res) => {
           console.log(err);
           console.log("Error in logout");
         } else {
+          db.run(updateLockStatus, ['Locked', req.user.id], (err) => {
+            if (err) return console.error(err.message);
+          });
           res.redirect('/');
           console.log("Logout successful");
         }

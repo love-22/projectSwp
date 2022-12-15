@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 const {passport} = require('../passport-config');
 const tokens = {};
-const {db, findUserToken, updateTwoFA, findUserToLogAttempt2FA, updateUserAttempt2FA, updateUserlocked2FA} = require('../database');
+const {db, findUserToken, updateTwoFA, findUserToLogAttempt2FA, updateUserAttempt2FA, updateUserlocked2FA, updateLockStatus, updateLockStatusByEmail} = require('../database');
 const { validationResult } = require("express-validator");
 
 const getLogin = (req, res) => {
@@ -26,6 +26,9 @@ const postLogin = (req, res, next) => {
       })
     } else {
       const email = req.body.email;
+      db.run(updateLockStatusByEmail, ['Locked', email], (err) => {
+        if (err) return console.error(err.message);
+      });
       passport.authenticate('local', function (err, user, info, attempt) {
         if (err) {
           console.log(err);
@@ -46,7 +49,7 @@ const postLogin = (req, res, next) => {
             console.log(err);
             return next(err);
           }
-    
+
           sendMail(email, req).catch(console.error);
     
           console.log("Access Granted");
@@ -132,7 +135,9 @@ const postLogin2FA = (req, res, next) => {
               db.run(updateUserlocked2FA, ['0', req.user.id], (err) => {
                 if (err) return console.error(err.message);
               });
-              // This should go to an authentication thing.
+              db.run(updateLockStatus, ['Unlocked', req.user.id], (err) => {
+                if (err) return console.error(err.message);
+              });
               return res.redirect('/');
             } else {
               // 2fa locked 5 mins
