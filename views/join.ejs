@@ -96,57 +96,6 @@
       </div>
     </body>
 
-
-    <!-- <script>
-      
-      //password validation
-     const password = document.getElementById("password")
-     const password2 = document.getElementById("repassword");
-       //password Length
-       function validatePassword(){
-         if(password.value.length < 8) {
-           password2.setCustomValidity("length must be greater than 8");
-
-        //password not allowed to contain space
-         } else if(password.value.match(/\s/)){
-           password2.setCustomValidity("password not allowed to contain space");
-
-        // //password not allowed contain special character
-        //  } else if(password.value.match(/[!@#$%^&*]/)){
-        //    password2.setCustomValidity("password not allowed contain special character");
-
-        //password not allowed use same character more than 3 times
-         } else if(password.value.match(/(.)\1{2,}/)){
-           password2.setCustomValidity("password not allowed use same character more than 3 times");
-
-        //password not allowed to contain username
-         } else if(password.value.match(/name/)){
-           password2.setCustomValidity("password not allowed to contain username");
-        
-        //password must contain Uppercase
-          } else if(!password.value.match(/[A-Z]/)){
-           password2.setCustomValidity("password must contain special character");
-
-        //password must contain Lowercase
-         } else if(!password.value.match(/[a-z]/)){
-           password2.setCustomValidity("password must contain Lowercase");
-
-        //password must contain number
-         } else if(!password.value.match(/[0-9]/)){
-           password2.setCustomValidity("password must contain number");
-           
-       //password match
-         } else if(password.value != password2.value){
-           password2.setCustomValidity("Passwords Don't Match");
-         } else {
-           password2.setCustomValidity('');
-         }
-       }
-       password.onchange = validatePassword;
-       password2.onchange = validatePassword;
-      
-      </script> -->
-
      <!--reCAPTCHAv2 Check Box-->
       <script src="https://www.google.com/recaptcha/api.js" async defer></script>
                 

@@ -153,7 +153,11 @@ app.post('/addToCart', checkIfFullyLoggedIn, addToCart);
 
 app.post('/removeProduct', checkIfFullyLoggedIn, removeProduct);
 
-app.post('/writeReview/:id', checkIfFullyLoggedIn, postWriteReview);
+app.post('/writeReview/:id', checkIfFullyLoggedIn, urlencodedParser, [
+  check('userReview', "Review cannot be empty or exceed 5000 characters.")
+    .exists()
+    .isLength({min:2, max:5000})
+],postWriteReview);
 
 app.post('/payCart', checkIfFullyLoggedIn, payCart);
 
