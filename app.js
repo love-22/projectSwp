@@ -62,7 +62,7 @@ const upload = multer({storage:storage});
 
 app.get('/', getMain);
 
-app.post('/main', checkIfFullyLoggedIn, postLogout);
+app.post('/main', checkAuthenticated2FA, postLogout);
 
 app.post('/goToProduct', goToProductOnClick);
 
@@ -117,12 +117,12 @@ app.post('/join', urlencodedParser, [
 
 app.get('/userDashboard', checkIfFullyLoggedIn, getUserDashboard);
 
-app.post('/deleteAccount', checkIfFullyLoggedIn, userDeletesAccount);
+// app.post('/deleteAccount', checkIfFullyLoggedIn, userDeletesAccount);
 
 app.get('/userDashboardEdit', checkIfFullyLoggedIn, getUserDashboardEdit);
 
 app.post('/userDashboardEdit', checkIfFullyLoggedIn, urlencodedParser, [
-  check('name', "Name must be at least")
+  check('name', "Name must be at least 3 to 128 characters long")
     .exists()
     .isLength({min:3, max:128}),
   check('email', "EMAIL is not valid")
@@ -142,7 +142,7 @@ app.post('/userDashboardEdit', checkIfFullyLoggedIn, urlencodedParser, [
     .isLength({ min:0, max:256}),
   check('repassword2', "NEW RE-PASSWORD must be at least 8 characters long.")
     .isLength({ min:0, max:256})
-],postUserDashboardEdit);
+], postUserDashboardEdit);
 
 app.get('/getOrders', checkIfFullyLoggedIn, getOrderedItems);
 
