@@ -94,11 +94,22 @@ app.post('/login2', checkAuthenticated2FA, urlencodedParser, [
 // Registration
 ///////////////////////////////////////////////////////////////
 
-app.get('/join', urlencodedParser, [
-  check()
-], getRegister);
+app.get('/join', getRegister);
 
-app.post('/join', postRegister);
+app.post('/join', urlencodedParser, [
+  check('name', "Username must be at least")
+    .exists()
+    .isLength({min:3, max:128}),
+  check('email', "EMAIL is not valid")
+    .isEmail()
+    .normalizeEmail(),
+  check('password', "PASSWORD must be at least 8 characters long.")
+    .exists()
+    .isLength({ min:8, max:256}),
+  check('repassword', "RE-PASSWORD must be at least 8 characters long.")
+    .exists()
+    .isLength({ min:8, max:256})
+], postRegister);
 
 ///////////////////////////////////////////////////////////////
 // User Dashboard
