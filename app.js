@@ -94,7 +94,9 @@ app.post('/login2', checkAuthenticated2FA, urlencodedParser, [
 // Registration
 ///////////////////////////////////////////////////////////////
 
-app.get('/join', getRegister);
+app.get('/join', urlencodedParser, [
+  check()
+], getRegister);
 
 app.post('/join', postRegister);
 

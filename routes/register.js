@@ -7,22 +7,40 @@ const getRegister = (req, res) => {
 
 const postRegister = async (req, res) => {
     try {
-      const hashedPassword = await bcrypt.hash(req.body.password, 10); //hashing password
-
-      db.run(insertNewUser, [req.body.name, req.body.email, hashedPassword], (err) => {
-        if (err) {
-          console.log(err);
-          res.redirect('/join');
-        } else {
-          const query = db.prepare(findUserbyEmail);
-          query.get(req.body.email, function (err, row) {
-              db.run(insertTwoFA, [row.id], (err) => {
-                if (err) return console.error(err.message);
-                res.redirect('/login1');
-              });
-          });
+      const errors = validationResult(req);
+      if(!errors.isEmpty()) {
+        console.log(errors.array());
+        console.log(errors.array().length);
+        let errMsg = [];
+        let x = 0;
+        while (x != errors.array().length){
+          errMsg.push(errors.array()[x].msg)
+          x++;
         }
-      });
+        const alerte = errors.array();
+        res.render('login1.ejs', {
+          length:errMsg.length,
+          alert:errMsg
+        })
+      } else {
+        const hashedPassword = await bcrypt.hash(req.body.password, 10); //hashing password
+
+        db.run(insertNewUser, [req.body.name, req.body.email, hashedPassword], (err) => {
+          if (err) {
+            console.log(err);
+            res.redirect('/join');
+          } else {
+            const query = db.prepare(findUserbyEmail);
+            query.get(req.body.email, function (err, row) {
+                db.run(insertTwoFA, [row.id], (err) => {
+                  if (err) return console.error(err.message);
+                  res.redirect('/login1');
+                });
+            });
+          }
+        });
+      }
+      
     } catch {
       console.log("Failure in register.js - Could not register a new user.");
       res.redirect('/join');
