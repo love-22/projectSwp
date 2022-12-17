@@ -54,7 +54,11 @@ const storage = multer.diskStorage({
         cb(null, Date.now() + path.extname(file.originalname))
     }
 });
-const upload = multer({storage:storage});
+const upload = multer({
+  storage:storage,
+  limits: {
+    fileSize: 8000000 // 8MB
+  }});
 
 ///////////////////////////////////////////////////////////////
 // Index
