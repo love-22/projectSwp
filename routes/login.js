@@ -3,6 +3,10 @@ const {passport} = require('../passport-config');
 const tokens = {};
 const {db, findUserToken, updateTwoFA, findUserToLogAttempt2FA, updateUserAttempt2FA, updateUserlocked2FA, updateLockStatus, updateLockStatusByEmail} = require('../database');
 const { validationResult } = require("express-validator");
+const crypto = require('crypto');
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 
 const getLogin = (req, res) => {
     res.render('login1.ejs', {length:0, alert:''});
@@ -68,33 +72,36 @@ async function sendMail(email, req) {
     // create reusable transporter object using the default SMTP transport
     let transporter = nodemailer.createTransport({
     host: "smtp.mailtrap.io",
-    port: 587, //SMTP transport security port //if not working try 2525.. 
+    port: 587,
+    secured: true,
     auth: {
-        user: "e9702670857b2c",
-        pass: "2e6f61e062e02a"
+        user: process.env.NODEMAILER_USER,
+        pass: process.env.NODEMAILER_PASS
     }
     });
 
     //token random 6 digits code
-    const token = Math.floor(100000 + Math.random() * 900000);
+    let token;
+    crypto.randomBytes(3, function(err, buffer) {
+      token = parseInt(buffer.toString('hex'), 16).toString().substr(0,6);
+      db.run(updateTwoFA, [token, req.user.id], (err) => {
+        if (err) return console.error(err.message);
+      });
 
-    db.run(updateTwoFA, [token, req.user.id], (err) => {
-      if (err) return console.error(err.message);
+      // send mail with defined transport object
+      let info = transporter.sendMail({
+      from: 'test@swp.com', // Sender
+      to: email, // Receivers
+      subject: "SWP Login Token", // Mail Subject
+
+      //Random 6 digit code email format
+      text: "Your Login code is: " + token, // plain text body
+      html: "Your Login code is: " + token // html body
+      });
+
+      // Message sent
+      console.log("Token sent");
     });
-    
-    // send mail with defined transport object
-    let info = await transporter.sendMail({
-    from: 'test@swp.com', // Sender
-    to: email, // Receivers
-    subject: "SWP Login Token", // Mail Subject
-
-    //Random 6 digit code email format
-    text: "Your Login code is: " + token, // plain text body
-    html: "Your Login code is: " + token // html body
-    });
-
-    // Message sent
-    console.log("Token sent");
 }
 
 const getLogin2FA = (req, res) => {
